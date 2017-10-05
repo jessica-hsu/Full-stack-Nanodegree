@@ -16,6 +16,8 @@ main_page_head = '''
     <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap-theme.min.css">
     <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
     <script src="https://netdna.bootstrapcdn.com/bootstrap/3.1.0/js/bootstrap.min.js"></script>
+    <link href="https://fonts.googleapis.com/css?family=Poppins" rel="stylesheet">
+
     <style type="text/css" media="screen">
         body {
             padding-top: 80px;
@@ -56,6 +58,19 @@ main_page_head = '''
             top: 0;
             background-color: white;
         }
+        h2 {
+            font-family: 'Poppins', sans-serif;
+        }
+        .jumbotron {
+            font-family: 'Poppins', sans-serif;
+            width: 70%;
+            margin: auto 15%;
+            border-radius: 25px;
+            font-size: 200%;
+            margin-bottom: 70px;
+            text-align: center;
+        }
+
     </style>
     <script type="text/javascript" charset="utf-8">
         // Pause the video when the modal is closed
@@ -112,9 +127,11 @@ main_page_content = '''
         </div>
       </div>
     </div>
+    <div class="jumbotron">Favorite Movies</div>
     <div class="container">
       {movie_tiles}
     </div>
+
   </body>
 </html>
 '''
@@ -125,6 +142,7 @@ movie_tile_content = '''
 <div class="col-md-6 col-lg-4 movie-tile text-center" data-trailer-youtube-id="{trailer_youtube_id}" data-toggle="modal" data-target="#trailer">
     <img src="{poster_image_url}" width="220" height="342">
     <h2>{movie_title}</h2>
+    <p>{movie_storyline}</p>
 </div>
 '''
 
@@ -143,9 +161,10 @@ def create_movie_tiles_content(movies):
 
         # Append the tile for the movie with its content filled in
         content += movie_tile_content.format(
-            movie_title=movie.title,
-            poster_image_url=movie.poster_image_url,
-            trailer_youtube_id=trailer_youtube_id
+            movie_title = movie.title,
+            poster_image_url = movie.poster_image_url,
+            trailer_youtube_id = trailer_youtube_id,
+            movie_storyline = movie.storyline
         )
     return content
 
@@ -156,7 +175,7 @@ def open_movies_page(movies):
 
     # Replace the movie tiles placeholder generated content
     rendered_content = main_page_content.format(
-        movie_tiles=create_movie_tiles_content(movies))
+        movie_tiles = create_movie_tiles_content(movies))
 
     # Output the file
     output_file.write(main_page_head + rendered_content)
@@ -164,4 +183,4 @@ def open_movies_page(movies):
 
     # open the output file in the browser (in a new tab, if possible)
     url = os.path.abspath(output_file.name)
-    webbrowser.open('file://' + url, new=2)
+    webbrowser.open('file://' + url, new = 2)
