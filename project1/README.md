@@ -17,4 +17,7 @@ If not, follow the download instructions on [Python's website](https://www.pytho
 Download (or just copy and paste) these files: entertainment_center.py, media.py, and fresh_tomatoes.py <br>
 Open terminal/command line <br>
 Go to directory where you stored the three files <br>
-Run with: 'python entertainment_center.py'
+Run program:
+```
+bash-3.2$ python entertainment_center.py
+```
