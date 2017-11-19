@@ -61,6 +61,32 @@ img {
 	margin: 0;
 }
 
+@media screen and (max-width: 780px) {
+	header {
+		font-size: 375%;
+	}
+	
+	#logo-image {
+		height: 90px;
+		width: 90px;
+	}
+}
+
+@media screen and (max-width: 736px) {
+	.col-sm-4 {
+		padding: 2% 30%;
+	}
+	
+	#logo-image {
+		height: 80px;
+		width: 80px;
+	}
+
+	#subtitle {
+		text-align: center;
+	}
+}
+
 @media screen and (max-width: 415px) {
 	#logo {
 		text-align: center;
