@@ -1,4 +1,3 @@
-@CHARSET "UTF-8";
 @import url('https://fonts.googleapis.com/css?family=Cambay');
 
 .container-fluid {
@@ -14,9 +13,6 @@
 #row-1 {
 	border-bottom: solid 4px #2d3c49;	
 	padding: 2%;
-}
-
-#logo {
 }
 
 #title {
@@ -58,4 +54,32 @@ header {
 
 #example-1, #example-2, #example-3 {
 	text-align: center;
+}
+
+img {
+	padding: 0;
+	margin: 0;
+}
+
+@media screen and (max-width: 320px) {
+	#logo {
+		text-align: center;
+	}
+	
+	#logo-image {
+		width: 40px;
+		height: 40px;
+	}
+
+	#title {
+		text-align: center;
+	}
+	
+	header {
+		font-size: 250%;
+	}
+	
+	#job-title {
+		font-size: 100%;
+	}
 }
