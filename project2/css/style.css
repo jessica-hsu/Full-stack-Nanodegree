@@ -61,13 +61,14 @@ img {
 	margin: 0;
 }
 
-@media screen and (max-width: 320px) {
+@media screen and (max-width: 415px) {
 	#logo {
 		text-align: center;
 	}
 	
 	#logo-image {
-		width: 40px;
+		margin: 3% 44%;
+		width: auto;
 		height: 40px;
 	}
 
@@ -81,5 +82,17 @@ img {
 	
 	#job-title {
 		font-size: 100%;
+	}
+	
+	#subtitle {
+		font-size: 180%;
+	}
+	
+	.work-title {
+		font-size: 150%;
+	}
+	
+	.col-sm-4 {
+		padding: 2% 5%;
 	}
 }
