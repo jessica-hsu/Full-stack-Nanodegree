@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2 class="section-title">Post Entry</h2>
+<br>
+<form name="post-form" id="post-form" method="post">
+  <div class="form-group">
+    <label for="title">Entry Title:</label>
+    <input type="text" class="form-control" id="title" placeholder="blog title here" required>
+  </div>
+  <div class="form-group">
+    <label for="blog-text">Content:</label>
+    <textarea rows="15" class="form-control" id="blog-text" placeholder="blog content here" required></textarea>
+  </div>
+  <button type="submit" class="btn" id="post-submit">Submit</button>
+</form>
+
+{% endblock %}

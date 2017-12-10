@@ -30,8 +30,7 @@
         </div>
         <div class="row">
           <div class="col-sm-12" id="content">
-            <div class="entry">
-            </div>
+            
           </div>
         </div>
       </div>

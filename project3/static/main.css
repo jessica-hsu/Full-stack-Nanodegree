@@ -12,7 +12,7 @@ html, body, .container-fluid {
   color: rgb(193, 198, 204);
   height: 100vh;
   font-family: 'Merriweather', serif;
-  font-size: 150%;
+  font-size: 125%;
   padding-top: 3%;
   padding-right: 0;
 }
@@ -36,9 +36,30 @@ html, body, .container-fluid {
 #blog-title {
   text-align: center;
   font-family: 'Spectral SC', serif;
-  font-size: 300%;
+  font-size: 350%;
 }
 
 #content {
   padding: 2% 5%;
+}
+
+.section-title {
+  margin: 0;
+  padding: 0;
+  font-family: 'PT Serif', serif;
+
+}
+
+.entry-title {
+  font-family: 'Lora', serif;
+
+}
+
+.entry-content {
+  font-family: 'Playfair Display', serif;
+
+}
+
+#post-submit {
+  background-color: grey;
 }
