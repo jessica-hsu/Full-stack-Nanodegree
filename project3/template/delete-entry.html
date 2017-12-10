@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2 class="section-title">Delete Entry</h2>
+<br>
+<form>
+  <div class="form-group">
+    <label for="delete-entry">Check Blog Entries to Delete:</label><br>
+    <input type="checkbox" id="{{ p.id }}">&nbsp; {{ p.entry_title }}<br>
+  </div>
+  <button type="submit" class="btn" id="delete-submit">Delete</button>
+</form>
+
+{% endblock %}
