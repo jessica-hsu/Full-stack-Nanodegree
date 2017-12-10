@@ -1,0 +1,7 @@
+<div class="entry">
+  <div class="entry-title">{{p.entry_title}}</div>
+  <div class="entry-date">{{p.create_date.strftime("%b %d, %Y")}}</div>
+  <div class="entry-content">
+    {{p._render_text | safe}}
+  </div>
+</div>

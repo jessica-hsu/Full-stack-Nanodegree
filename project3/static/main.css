@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css?family=Merriweather|Slabo+27px|Spectral+SC');
+@import url('https://fonts.googleapis.com/css?family=Lora|Merriweather|PT+Serif|Playfair+Display|Spectral+SC');
 
 html, body, .container-fluid {
   width: 100%;
@@ -50,9 +50,19 @@ html, body, .container-fluid {
 
 }
 
+hr {
+  border-color: rgb(91, 91, 91);
+}
 .entry-title {
   font-family: 'Lora', serif;
+  font-weight: bold;
+  font-size: 150%;
+}
 
+.entry-date {
+  font-family: 'Playfair Display', serif;
+  font-weight: bold;
+  font-size: 120%;
 }
 
 .entry-content {
