@@ -1,5 +1,4 @@
-function showEditModal(btn) {
-  var title = btn.innerHTML;
-  var id = btn.id;
-  
-}
+$(document).ready(function(){
+	$("#welcome-container").hide();
+	$("#welcome-container").fadeIn(2750);
+});

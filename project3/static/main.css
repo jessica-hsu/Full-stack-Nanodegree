@@ -1,6 +1,6 @@
-@import url('https://fonts.googleapis.com/css?family=Lora|Merriweather|PT+Serif|Playfair+Display|Spectral+SC');
+@import url('https://fonts.googleapis.com/css?family=Lora|Merriweather|PT+Serif|Playfair+Display|Spectral+SC|Barlow+Semi+Condensed');
 
-html, body, .container-fluid {
+html, body, .container-fluid, .row {
   width: 100%;
   height: 100%;
   margin: 0;
@@ -53,6 +53,7 @@ html, body, .container-fluid {
 hr {
   border-color: rgb(91, 91, 91);
 }
+
 .entry-title {
   font-family: 'Lora', serif;
   font-weight: bold;
@@ -76,4 +77,37 @@ hr {
 
 #post-submit, #edit-submit, #delete-submit {
   background-color: grey;
+}
+
+
+/* CSS STYLING FOR WELCOME PAGE*/
+
+header {
+	margin-top: 18%;
+  margin-bottom: 4%;
+	text-align: center;
+	font-family: 'Spectral SC', serif;
+	font-size: 300%;
+	color: rgb(8, 66, 79);
+}
+
+#choices {
+	padding: 1% 30%;
+}
+
+.choice {
+	text-align: center;
+	font-family: 'Barlow Semi Condensed', sans-serif;
+	font-size: 150%;
+}
+
+.choice:hover {
+	cursor: pointer;
+	background-color: rgba(8, 99, 119, 0.3);
+}
+
+@media (max-width: 500px) {
+	header {
+		margin-top: 45%;
+	}
 }
