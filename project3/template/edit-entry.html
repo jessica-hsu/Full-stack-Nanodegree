@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2 class="section-title">Edit Entry</h2>
+<br>
+<form name="edit-form" id="edit-form" method="post">
+  <div class="form-group">
+    <label for="edit-title">Entry Title:</label>
+    <input type="text" class="form-control" id="edit-title" value="{{p.entry_title}}" required>
+  </div>
+  <div class="form-group">
+    <label for="edit-blog-text">Content:</label>
+    <textarea rows="15" class="form-control" id="edit-blog-text" value="{{p._render_text | safe}}" required></textarea>
+  </div>
+  <button type="submit" class="btn" id="edit-submit">Update</button>
+</form>
+
+{% endblock %}
