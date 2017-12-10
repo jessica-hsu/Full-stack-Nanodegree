@@ -7,7 +7,7 @@ import jinja2
 
 from google.appengine.ext import db
 
-template_dir = os.path.join(os.path.dirname(__file__), 'templates')
+template_dir = os.path.join(os.path.dirname(__file__), 'template')
 jinja_env = jinja2.Environment(loader = jinja2.FileSystemLoader(template_dir),
                                autoescape = True)
 
@@ -32,7 +32,7 @@ def render_post(response, post):
 #Render main page that appears with first page load
 class MainPage(BlogHandler):
   def get(self):
-      self.render("welcome.html")
+      self.render("/index.html")
 
 def blog_key(name = 'default'):
     return db.Key.from_path('blogs', name)
@@ -60,7 +60,7 @@ class Post(db.Model):
 class BlogFront(BlogHandler):
     def get(self):
         posts = db.GqlQuery("select * from Post order by created desc limit 10")
-        self.render('front.html', posts = posts)
+        self.render('front-page.html', posts = posts)
 #Render
 class PostPage(BlogHandler):
     def get(self, post_id):
@@ -121,7 +121,7 @@ def valid_email(email):
 class Signup(BlogHandler):
 
     def get(self):
-        self.render("signup-form.html")
+        self.render("register.html")
 
     def post(self):
         have_error = False
@@ -156,11 +156,9 @@ class Signup(BlogHandler):
 
 
 app = webapp2.WSGIApplication([('/', MainPage),
-                               ('/unit2/rot13', Rot13),
-                               ('/unit2/signup', Signup),
-                               ('/unit2/welcome', Welcome),
+                               ('/welcome', Welcome),
                                ('/blog/?', BlogFront),
                                ('/blog/([0-9]+)', PostPage),
-                               ('/blog/newpost', NewEntry),
+                               ('/blog/newentry', NewEntry),
                                ],
                               debug=True)
