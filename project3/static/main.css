@@ -1,6 +1,6 @@
 @import url('https://fonts.googleapis.com/css?family=Lora|Merriweather|PT+Serif|Playfair+Display|Spectral+SC|Barlow+Semi+Condensed');
 
-html, body, .container-fluid, .row {
+html, body, .container-fluid {
   width: 100%;
   height: 100%;
   margin: 0;

@@ -5,6 +5,7 @@ from string import letters
 import webapp2
 import jinja2
 
+
 from google.appengine.ext import db
 
 template_dir = os.path.join(os.path.dirname(__file__), 'template')
@@ -44,17 +45,17 @@ class Welcome(BlogHandler):
         if valid_username(username):
             self.render('welcome.html', username = username)
         else:
-            self.redirect('/unit2/signup')
+            self.redirect('/register.html')
 
 class Post(db.Model):
-    subject = db.StringProperty(required = True)
+    entry_title = db.StringProperty(required = True)
     content = db.TextProperty(required = True)
     created = db.DateTimeProperty(auto_now_add = True)
     last_modified = db.DateTimeProperty(auto_now = True)
 
     def render(self):
         self._render_text = self.content.replace('\n', '<br>')
-        return render_str("post.html", p = self)
+        return render_str("view-entry.html", p = self)
 
 #Render blog's front page
 class BlogFront(BlogHandler):
@@ -149,9 +150,9 @@ class Signup(BlogHandler):
             have_error = True
 
         if have_error:
-            self.render('signup-form.html', **params)
+            self.render('register.html', **params)
         else:
-            self.redirect('/unit2/welcome?username=' + username)
+            self.redirect('/welcome?username=' + username)
 
 
 
