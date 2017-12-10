@@ -1,0 +1,44 @@
+@import url('https://fonts.googleapis.com/css?family=Merriweather|Slabo+27px|Spectral+SC');
+
+html, body, .container-fluid {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+#navigation {
+  background-color: rgb(38, 39, 40);
+  color: rgb(193, 198, 204);
+  height: 100vh;
+  font-family: 'Merriweather', serif;
+  font-size: 150%;
+  padding-top: 3%;
+  padding-right: 0;
+}
+
+.nav-links {
+  padding: 4% 5% 4%;
+  width: 100%;
+}
+
+.nav-links:hover {
+  cursor: pointer;
+  background-color: grey;
+}
+
+#main {
+  height: 100vh;
+  background-color: rgb(216, 216, 216);
+  overflow-y: scroll;
+}
+
+#blog-title {
+  text-align: center;
+  font-family: 'Spectral SC', serif;
+  font-size: 300%;
+}
+
+#content {
+  padding: 2% 5%;
+}
