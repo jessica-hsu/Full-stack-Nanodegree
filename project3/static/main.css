@@ -70,6 +70,10 @@ hr {
 
 }
 
-#post-submit {
+.edit-btn {
+  margin-right: 1%;
+}
+
+#post-submit, #edit-submit, #delete-submit {
   background-color: grey;
 }

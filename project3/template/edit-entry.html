@@ -1,19 +1,41 @@
 {% extends "base.html" %}
 
 {% block content %}
-<!-- MODIFY. BAD FRONT END -->
 <h2 class="section-title">Edit Entry</h2>
 <br>
-<form name="edit-form" id="edit-form" method="post">
-  <div class="form-group">
-    <label for="edit-title">Entry Title:</label>
-    <input type="text" class="form-control" id="edit-title" value="{{p.entry_title}}" required>
+<label>Click 'edit' button to modify entry:</label><br>
+{% for p in posts %}
+<button type="button" id="{{ p.id }}" class="btn btn-primary" data-toggle="modal" data-target="#make-edits">Edit</button>
+&nbsp;{{p.entry_title}}<br><br>
+{% endfor %}
+
+</div>
+<!-- html code for modal. make mods to entries here -->
+<div id="make-edits" class="modal fade" role="dialog">
+<div class="modal-dialog modal-lg">
+  <div class="modal-content">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal">&times;</button>
+      <h4 class="modal-title">Edit Entry</h4>
+    </div>
+    <div class="modal-body">
+      <form name="edit-form" id="edit-form" method="post">
+        <div class="form-group">
+          <label for="edit-title">Entry Title:</label>
+          <input type="text" class="form-control" id="edit-title" value="{{p.entry_title}}" required>
+        </div>
+        <div class="form-group">
+          <label for="edit-blog-text">Content:</label>
+          <textarea rows="15" class="form-control" id="edit-blog-text" required>{{p._render_text | safe}}</textarea>
+        </div>
+        <button type="submit" class="btn" id="edit-submit">Update</button>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+    </div>
   </div>
-  <div class="form-group">
-    <label for="edit-blog-text">Content:</label>
-    <textarea rows="15" class="form-control" id="edit-blog-text" value="{{p._render_text | safe}}" required></textarea>
-  </div>
-  <button type="submit" class="btn" id="edit-submit">Update</button>
-</form>
+</div>
+</div>
 
 {% endblock %}
