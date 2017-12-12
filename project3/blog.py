@@ -16,6 +16,13 @@ def render_str(template, **params):
     t = jinja_env.get_template(template)
     return t.render(params)
 
+def render_post(response, post):
+    response.out.write('<b>' + post.subject + '</b><br>')
+    response.out.write(post.content)
+
+def blog_key(name = 'default'):
+    return db.Key.from_path('blogs', name)
+
 class BlogHandler(webapp2.RequestHandler):
     def write(self, *a, **kw):
         self.response.out.write(*a, **kw)
@@ -26,17 +33,10 @@ class BlogHandler(webapp2.RequestHandler):
     def render(self, template, **kw):
         self.write(self.render_str(template, **kw))
 
-def render_post(response, post):
-    response.out.write('<b>' + post.subject + '</b><br>')
-    response.out.write(post.content)
-
 #Render main page that appears with first page load
 class MainPage(BlogHandler):
   def get(self):
       self.render("/index.html")
-
-def blog_key(name = 'default'):
-    return db.Key.from_path('blogs', name)
 
 #Render welcome page after sign in
 class Welcome(BlogHandler):
@@ -47,9 +47,10 @@ class Welcome(BlogHandler):
         else:
             self.redirect('/register.html')
 
-class Post(db.Model):
-    entry_title = db.StringProperty(required = True)
-    content = db.TextProperty(required = True)
+#instance called "ENTRY" (record) with the following "entities" (columns) and data type
+class Entry(db.Model):
+    title = db.StringProperty(required = True)
+    blog_text = db.TextProperty(required = True)
     created = db.DateTimeProperty(auto_now_add = True)
     last_modified = db.DateTimeProperty(auto_now = True)
 
@@ -60,12 +61,13 @@ class Post(db.Model):
 #Render blog's front page
 class BlogFront(BlogHandler):
     def get(self):
-        posts = db.GqlQuery("select * from Post order by created desc limit 10")
+        posts = db.GqlQuery("select * from Entry order by created desc limit 10")
         self.render('front-page.html', posts = posts)
-#Render
+
+#Render something...
 class PostPage(BlogHandler):
     def get(self, post_id):
-        key = db.Key.from_path('Post', int(post_id), parent=blog_key())
+        key = db.Key.from_path('Entry', int(post_id), parent=blog_key())
         post = db.get(key)
 
         if not post:
@@ -80,16 +82,18 @@ class NewEntry(BlogHandler):
         self.render("new-entry.html")
 
     def post(self):
-        entry_title = self.request.get('entry_title')
-        content = self.request.get('content')
+        #grab data from form submit
+        title = self.request.get('title')
+        blog_text = self.request.get('blog_text')
 
+        #create record and insert to database
         if subject and content:
-            p = Post(parent = blog_key(), subject = subject, content = content)
+            p = Entry(parent = blog_key(), title = title, blog_text = blog_text)
             p.put()
             self.redirect('/blog/%s' % str(p.key().id()))
         else:
             error = "subject and content, please!"
-            self.render("new-entry.html", subject=subject, content=content, error=error)
+            self.render("new-entry.html", title=title, blog_text=blog_text, error=error)
 
 
 
@@ -119,7 +123,7 @@ EMAIL_RE  = re.compile(r'^[\S]+@[\S]+\.[\S]+$')
 def valid_email(email):
     return not email or EMAIL_RE.match(email)
 
-class Signup(BlogHandler):
+class Register(BlogHandler):
 
     def get(self):
         self.render("register.html")
@@ -161,5 +165,6 @@ app = webapp2.WSGIApplication([('/', MainPage),
                                ('/blog/?', BlogFront),
                                ('/blog/([0-9]+)', PostPage),
                                ('/blog/newentry', NewEntry),
+                                ('/register', Register),
                                ],
                               debug=True)
