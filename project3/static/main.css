@@ -75,7 +75,7 @@ hr {
   margin-right: 1%;
 }
 
-#post-submit, #edit-submit, #delete-submit, #register-submit {
+#post-submit, #edit-submit, #delete-submit, #register-submit, #login-submit {
   background-color: grey;
 }
 
@@ -113,12 +113,12 @@ header {
 }
 
 /*register.html*/
-#register-header {
+#register-header, #login-header {
   margin-top: 10%;
   margin-bottom: 2%;
 }
 
-#register {
+#register, #login {
   margin: auto 30%;
   width: 40%;
 }
