@@ -158,13 +158,16 @@ class Register(BlogHandler):
         else:
             self.redirect('/welcome?username=' + username)
 
-
+class Login(BlogHandler):
+    def get(self):
+        self.render("sign-in.html")
 
 app = webapp2.WSGIApplication([('/', MainPage),
                                ('/welcome', Welcome),
                                ('/blog/?', BlogFront),
                                ('/blog/([0-9]+)', PostPage),
                                ('/blog/newentry', NewEntry),
-                                ('/register', Register),
+                               ('/register', Register),
+                               ('/login', Login)
                                ],
                               debug=True)
