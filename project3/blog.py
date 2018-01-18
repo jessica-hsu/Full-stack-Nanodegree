@@ -33,6 +33,17 @@ class BlogHandler(webapp2.RequestHandler):
     def render(self, template, **kw):
         self.write(self.render_str(template, **kw))
 
+#instance called "ENTRY" (record) with the following "entities" (columns) and data type
+class Entry(db.Model):
+    title = db.StringProperty(required = True)
+    blog_text = db.TextProperty(required = True)
+    created = db.DateTimeProperty(auto_now_add = True)
+    last_modified = db.DateTimeProperty(auto_now = True)
+
+    def render(self):
+        self._render_text = self.content.replace('\n', '<br>')
+        return render_str("view-entry.html", p = self)
+
 #Render main page that appears with first page load
 class MainPage(BlogHandler):
   def get(self):
@@ -45,24 +56,18 @@ class Welcome(BlogHandler):
         if valid_username(username):
             self.render('welcome.html', username = username)
         else:
-            self.redirect('/register.html')
-
-#instance called "ENTRY" (record) with the following "entities" (columns) and data type
-class Entry(db.Model):
-    title = db.StringProperty(required = True)
-    blog_text = db.TextProperty(required = True)
-    created = db.DateTimeProperty(auto_now_add = True)
-    last_modified = db.DateTimeProperty(auto_now = True)
-
-    def render(self):
-        self._render_text = self.content.replace('\n', '<br>')
-        return render_str("view-entry.html", p = self)
+            self.redirect('/register')
 
 #Render blog's front page
 class BlogFront(BlogHandler):
     def get(self):
+        username = self.request.get('username')
+        if valid_username(username):
+            logged = True
+        else:
+            logged = False
         posts = db.GqlQuery("select * from Entry order by created desc limit 10")
-        self.render('front-page.html', posts = posts)
+        self.render('front-page.html', posts = posts, is_logged = logged)
 
 #Render something...
 class PostPage(BlogHandler):
@@ -97,34 +102,8 @@ class NewEntry(BlogHandler):
 
 
 
-###### Unit 2 HW's
-class Rot13(BlogHandler):
-    def get(self):
-        self.render('rot13-form.html')
-
-    def post(self):
-        rot13 = ''
-        text = self.request.get('text')
-        if text:
-            rot13 = text.encode('rot13')
-
-        self.render('rot13-form.html', text = rot13)
-
-
-USER_RE = re.compile(r"^[a-zA-Z0-9_-]{3,20}$")
-def valid_username(username):
-    return username and USER_RE.match(username)
-
-PASS_RE = re.compile(r"^.{3,20}$")
-def valid_password(password):
-    return password and PASS_RE.match(password)
-
-EMAIL_RE  = re.compile(r'^[\S]+@[\S]+\.[\S]+$')
-def valid_email(email):
-    return not email or EMAIL_RE.match(email)
-
+#Render sign up page
 class Register(BlogHandler):
-
     def get(self):
         self.render("register.html")
 
@@ -158,9 +137,14 @@ class Register(BlogHandler):
         else:
             self.redirect('/welcome?username=' + username)
 
+#Render login page
 class Login(BlogHandler):
     def get(self):
         self.render("sign-in.html")
+
+#Does the logout process
+#class Logout(BlogHandler):
+
 
 app = webapp2.WSGIApplication([('/', MainPage),
                                ('/welcome', Welcome),
@@ -168,6 +152,7 @@ app = webapp2.WSGIApplication([('/', MainPage),
                                ('/blog/([0-9]+)', PostPage),
                                ('/blog/newentry', NewEntry),
                                ('/register', Register),
-                               ('/login', Login)
+                               ('/login', Login)#,
+                               #('/logout', Logout)
                                ],
                               debug=True)

@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 
+{% set logged_in = {{ is_logged }} %}
+
 {% block content %}
 
   {% for p in posts %}
