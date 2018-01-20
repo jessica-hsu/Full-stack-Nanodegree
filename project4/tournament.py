@@ -12,13 +12,16 @@ def connect():
 
 def deleteMatches():
     """Remove all the match records from the database."""
-    conn = connect()
+    conn = connect() # get database connection
     curse = conn.cursor()
     sql = "DELETE FROM matches"
     curse.execute(sql)
+    # reset the number of wins and matches of all players to zero
     sql = "UPDATE players SET wins = 0, matches = 0"
     curse.execute(sql)
+    # commit is used to make sure database changes are actually made
     conn.commit()
+    # close cursor and database connection
     curse.close()
     conn.close()
 
@@ -39,9 +42,11 @@ def countPlayers():
     curse = conn.cursor()
     sql = "SELECT count(id) AS num_players FROM players"
     curse.execute(sql)
+    # grab the first row of the result from sql query
     result = curse.fetchone()
     curse.close()
     conn.close()
+    # result[0] refers to the first column, num_players
     return result[0]
 
 def registerPlayer(name):
@@ -56,8 +61,8 @@ def registerPlayer(name):
     conn = connect()
     curse = conn.cursor()
     sql = "INSERT INTO players (full_name, wins, matches) VALUES (%s, %s, %s)"
-    data = [name, 0, 0]
-    curse.execute(sql, data)
+    data = [name, 0, 0] # set number of wins and matches as zero for newly registered player
+    curse.execute(sql, data) # the proper way of passing variables to SQL queries in python
     conn.commit()
     curse.close()
     conn.close()
@@ -79,8 +84,10 @@ def playerStandings():
 
     conn = connect()
     curse = conn.cursor()
+    # order results by number of wins. Default is DESCENDING so highest number of wins is first row
     sql = "SELECT id, full_name, wins, matches FROM players ORDER BY wins"
     curse.execute(sql)
+    # fetchall() takes all the results and returns them as a list of tuples
     result = curse.fetchall()
     curse.close()
     conn.close()
@@ -99,6 +106,7 @@ def reportMatch(winner, loser):
     sql = "INSERT INTO matches (winner_id, loser_id) VALUES (%s, %s)"
     data = [winner, loser]
     curse.execute(sql, data)
+    # Remember to update number of wins and matches every time a match was reported. Update for both winner and loser
     sql = "UPDATE players SET wins = wins + 1, matches = matches + 1 WHERE id = %s"
     data = [winner]
     sql_2 = "UPDATE players SET matches = matches + 1 WHERE id = %s"
@@ -125,10 +133,15 @@ def swissPairings():
         id2: the second player's unique id
         name2: the second player's name
     """
+    # get full list of players and where they stand in terms of wins
     rankings = playerStandings()
+    # create empty list to hold all the pairings
     swiss = []
     for i in range(0,len(rankings)-1,2):
+        # rankings return a list of players already in order so just grab them by two's to get each pairing
         tup = (rankings[i][0], rankings[i][1], rankings[i+1][0], rankings[i+1][1])
+        # add pairing to end of list
         swiss.append(tup)
 
+    #return list of pairings
     return swiss

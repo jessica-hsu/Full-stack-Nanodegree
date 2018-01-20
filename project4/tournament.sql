@@ -3,6 +3,7 @@ DROP DATABASE IF EXISTS tournament;
 CREATE DATABASE tournament;
 
 -- Drop/Create players table w/columns (id, name)
+-- this table also holds the wins/matches record for each player
 DROP TABLE IF EXISTS players CASCADE; --CASCADE needed to remove dependency
 CREATE TABLE players (
 	id serial not null,
@@ -13,6 +14,7 @@ CREATE TABLE players (
 );
 
 -- Drop/Create matches table w/columns (winner id, loser id)
+-- winner id and loser id refers to the id in the players table
 DROP TABLE IF EXISTS matches;
 CREATE TABLE matches (
 	winner_id serial references players(id) not null,
