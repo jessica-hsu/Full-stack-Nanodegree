@@ -16,6 +16,8 @@ def deleteMatches():
     curse = conn.cursor()
     sql = "DELETE FROM matches"
     curse.execute(sql)
+    sql = "UPDATE players SET wins = 0, matches = 0"
+    curse.execute(sql)
     conn.commit()
     curse.close()
     conn.close()
@@ -125,7 +127,7 @@ def swissPairings():
     """
     rankings = playerStandings()
     swiss = []
-    for i in range(0,len(rankings)-1):
+    for i in range(0,len(rankings)-1,2):
         tup = (rankings[i][0], rankings[i][1], rankings[i+1][0], rankings[i+1][1])
         swiss.append(tup)
 
