@@ -97,7 +97,7 @@ def reportMatch(winner, loser):
     sql = "INSERT INTO matches (winner_id, loser_id) VALUES (%s, %s)"
     data = [winner, loser]
     curse.execute(sql, data)
-    sql = "UPDATE players SET wins = win + 1, matches = matches + 1 WHERE id = %s"
+    sql = "UPDATE players SET wins = wins + 1, matches = matches + 1 WHERE id = %s"
     data = [winner]
     sql_2 = "UPDATE players SET matches = matches + 1 WHERE id = %s"
     data_2 = [loser]
