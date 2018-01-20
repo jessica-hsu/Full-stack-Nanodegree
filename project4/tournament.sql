@@ -6,7 +6,9 @@ CREATE DATABASE tournament;
 DROP TABLE IF EXISTS players CASCADE; --CASCADE needed to remove dependency
 CREATE TABLE players {
 	id serial not null,
-	name varchar(30) not null,
+	full_name varchar(30) not null,
+	wins int,
+	matches int,
 	PRIMARY KEY(id)
 };
 
@@ -15,12 +17,4 @@ DROP TABLE IF EXISTS matches;
 CREATE TABLE matches {
 	winner_id serial references players(id) not null,
 	loser_id serial references players(id) not null
-};
-
--- Drop/Create standings table w/columns (id, wins, matches)
-DROP TABLE IF EXISTS standings;
-CREATE TABLE standings {
-	id serial references players(id) not null,
-	wins int,
-	matches int
 };
