@@ -13,38 +13,38 @@ def connect():
 def deleteMatches():
     """Remove all the match records from the database."""
     conn = connect() # get database connection
-    curse = conn.cursor()
+    cursor = conn.cursor()
     sql = "DELETE FROM matches"
-    curse.execute(sql)
+    cursor.execute(sql)
     # reset the number of wins and matches of all players to zero
     sql = "UPDATE players SET wins = 0, matches = 0"
-    curse.execute(sql)
+    cursor.execute(sql)
     # commit is used to make sure database changes are actually made
     conn.commit()
     # close cursor and database connection
-    curse.close()
+    cursor.close()
     conn.close()
 
 
 def deletePlayers():
     """Remove all the player records from the database."""
     conn = connect()
-    curse = conn.cursor()
+    cursor = conn.cursor()
     sql = "DELETE FROM players"
-    curse.execute(sql)
+    cursor.execute(sql)
     conn.commit()
-    curse.close()
+    cursor.close()
     conn.close()
 
 def countPlayers():
     """Returns the number of players currently registered."""
     conn = connect()
-    curse = conn.cursor()
+    cursor = conn.cursor()
     sql = "SELECT count(id) AS num_players FROM players"
-    curse.execute(sql)
+    cursor.execute(sql)
     # grab the first row of the result from sql query
-    result = curse.fetchone()
-    curse.close()
+    result = cursor.fetchone()
+    cursor.close()
     conn.close()
     # result[0] refers to the first column, num_players
     return result[0]
@@ -59,12 +59,12 @@ def registerPlayer(name):
       name: the player's full name (need not be unique).
     """
     conn = connect()
-    curse = conn.cursor()
+    cursor = conn.cursor()
     sql = "INSERT INTO players (full_name, wins, matches) VALUES (%s, %s, %s)"
     data = [name, 0, 0] # set number of wins and matches as zero for newly registered player
-    curse.execute(sql, data) # the proper way of passing variables to SQL queries in python
+    cursor.execute(sql, data) # the proper way of passing variables to SQL queries in python
     conn.commit()
-    curse.close()
+    cursor.close()
     conn.close()
 
 
@@ -83,13 +83,13 @@ def playerStandings():
     """
 
     conn = connect()
-    curse = conn.cursor()
+    cursor = conn.cursor()
     # order results by number of wins. Default is DESCENDING so highest number of wins is first row
     sql = "SELECT id, full_name, wins, matches FROM players ORDER BY wins"
-    curse.execute(sql)
+    cursor.execute(sql)
     # fetchall() takes all the results and returns them as a list of tuples
-    result = curse.fetchall()
-    curse.close()
+    result = cursor.fetchall()
+    cursor.close()
     conn.close()
     return result
 
@@ -102,19 +102,19 @@ def reportMatch(winner, loser):
       loser:  the id number of the player who lost
     """
     conn = connect()
-    curse = conn.cursor()
+    cursor = conn.cursor()
     sql = "INSERT INTO matches (winner_id, loser_id) VALUES (%s, %s)"
     data = [winner, loser]
-    curse.execute(sql, data)
+    cursor.execute(sql, data)
     # Remember to update number of wins and matches every time a match was reported. Update for both winner and loser
     sql = "UPDATE players SET wins = wins + 1, matches = matches + 1 WHERE id = %s"
     data = [winner]
     sql_2 = "UPDATE players SET matches = matches + 1 WHERE id = %s"
     data_2 = [loser]
-    curse.execute(sql, data)
-    curse.execute(sql_2, data_2)
+    cursor.execute(sql, data)
+    cursor.execute(sql_2, data_2)
     conn.commit()
-    curse.close()
+    cursor.close()
     conn.close()
 
 
