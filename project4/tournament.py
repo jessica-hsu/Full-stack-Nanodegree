@@ -40,7 +40,7 @@ def countPlayers():
     result = curse.fetchone()
     curse.close()
     conn.close()
-    return result['num_players']
+    return result[0]
 
 def registerPlayer(name):
     """Adds a player to the tournament database.
