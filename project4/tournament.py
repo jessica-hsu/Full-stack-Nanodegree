@@ -9,22 +9,17 @@ def connect():
     """Connect to the PostgreSQL database.  Returns a database connection."""
     return psycopg2.connect("dbname=tournament")
 
-
 def deleteMatches():
     """Remove all the match records from the database."""
     conn = connect() # get database connection
     cursor = conn.cursor()
     sql = "DELETE FROM matches"
     cursor.execute(sql)
-    # reset the number of wins and matches of all players to zero
-    sql = "UPDATE players SET wins = 0, matches = 0"
-    cursor.execute(sql)
     # commit is used to make sure database changes are actually made
     conn.commit()
     # close cursor and database connection
     cursor.close()
     conn.close()
-
 
 def deletePlayers():
     """Remove all the player records from the database."""
@@ -60,13 +55,12 @@ def registerPlayer(name):
     """
     conn = connect()
     cursor = conn.cursor()
-    sql = "INSERT INTO players (full_name, wins, matches) VALUES (%s, %s, %s)"
-    data = [name, 0, 0] # set number of wins and matches as zero for newly registered player
+    sql = "INSERT INTO players (full_name) VALUES (%s)"
+    data = [name] # name as passed param
     cursor.execute(sql, data) # the proper way of passing variables to SQL queries in python
     conn.commit()
     cursor.close()
     conn.close()
-
 
 def playerStandings():
     """Returns a list of the players and their win records, sorted by wins.
@@ -85,14 +79,20 @@ def playerStandings():
     conn = connect()
     cursor = conn.cursor()
     # order results by number of wins. Default is DESCENDING so highest number of wins is first row
-    sql = "SELECT id, full_name, wins, matches FROM players ORDER BY wins"
+    # case statement added to make num matches 0 when player did not play any games yet
+    sql = "SELECT p.id, full_name, count(winner_id) as wins, \
+    CASE WHEN (SELECT COUNT(*) FROM matches WHERE winner_id = p.id \
+     OR loser_id = p.id) = 0 THEN 0 ELSE COUNT(*) END AS matches \
+    FROM players p FULL JOIN matches m \
+    ON p.id = m.winner_id \
+    GROUP BY full_name, p.id \
+    ORDER BY wins DESC";
     cursor.execute(sql)
     # fetchall() takes all the results and returns them as a list of tuples
     result = cursor.fetchall()
     cursor.close()
     conn.close()
     return result
-
 
 def reportMatch(winner, loser):
     """Records the outcome of a single match between two players.
@@ -106,17 +106,9 @@ def reportMatch(winner, loser):
     sql = "INSERT INTO matches (winner_id, loser_id) VALUES (%s, %s)"
     data = [winner, loser]
     cursor.execute(sql, data)
-    # Remember to update number of wins and matches every time a match was reported. Update for both winner and loser
-    sql = "UPDATE players SET wins = wins + 1, matches = matches + 1 WHERE id = %s"
-    data = [winner]
-    sql_2 = "UPDATE players SET matches = matches + 1 WHERE id = %s"
-    data_2 = [loser]
-    cursor.execute(sql, data)
-    cursor.execute(sql_2, data_2)
     conn.commit()
     cursor.close()
     conn.close()
-
 
 def swissPairings():
     """Returns a list of pairs of players for the next round of a match.
