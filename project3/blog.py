@@ -12,6 +12,8 @@ template_dir = os.path.join(os.path.dirname(__file__), 'template')
 jinja_env = jinja2.Environment(loader = jinja2.FileSystemLoader(template_dir),
                                autoescape = True)
 
+secret = "shamidaigee" # taiwanese for "what is this?". Used to hash passwords
+
 def render_str(template, **params):
     t = jinja_env.get_template(template)
     return t.render(params)
@@ -23,6 +25,16 @@ def render_post(response, post):
 def blog_key(name = 'default'):
     return db.Key.from_path('blogs', name)
 
+# for securing values for registration
+def make_secure_val(val):
+    return "%s|%s" % (val, hmac.new(secret, val).hexigest())
+
+# making sure secure value is valid
+def check_secure_val(secure_val):
+    val = secure_val.split("|")[0]
+    if secure_val == make_secure_val(val):
+        return val
+
 class BlogHandler(webapp2.RequestHandler):
     def write(self, *a, **kw):
         self.response.out.write(*a, **kw)
@@ -33,7 +45,61 @@ class BlogHandler(webapp2.RequestHandler):
     def render(self, template, **kw):
         self.write(self.render_str(template, **kw))
 
-#instance called "ENTRY" (record) with the following "entities" (columns) and data type
+    # cookie setting
+    def set_cookie(self, name, val):
+        cookie_value = make_secure_val(val)
+        self.response.headers.add_header(
+            "Set-Cookie",
+            "%s=%s; Path=/" % (name, cookie_value)
+        )
+
+    # read cookie. Check to see if exists
+    def read_cookie(self, name):
+        cookie_value = self.request.cookies.get(name) # get cookie according to name
+        if (check_secure_val(cookie_value)): # return cookie if cookie exists and is secure
+            return cookie_value
+
+    # check to see if user is logged in
+    def initialize(self, *a, **kw):
+        webapp2.RequestHandler.initialize(self, *a, **kw)
+        uid = self.read_cookie("user_id")
+        self.user = uid and User.by_id(int(uid))
+
+# create User objects to store different users. Also have methods for this class objects
+class User (db.Model):
+    # object properties
+    name = db.StringProperty(required = True)
+    hashed_pw = db.StringProperty(required = True)
+    email = db.StringProperty()
+
+    # class method: method to look up a user by ID
+    @classmethod
+    def getById(cls, uid):
+        return User.getUserById(uid, parent = users_key())
+
+    # class method: look up a user by names
+    @classmethod
+    def getByName(cls, name):
+        user = User.all().filter('name =', name).get()  # database lookup. select * from user where name = name
+        return user
+
+    # creates new user and adds to database
+    @classmethod
+    def register(cls, name, password, email = NONE):
+        hashed_pw = make_pw_hash(name, password)     # hash the password
+        # create new user object and return it
+        u = User(parent = users_key(),
+                 name = name,
+                 hashed_pw = hashed_pw,
+                 email = email)
+        return u
+
+    # logs user in
+    @classmethod
+    def login():
+
+
+# instance called "ENTRY" (record) with the following "entities" (columns) and data type
 class Entry(db.Model):
     title = db.StringProperty(required = True)
     blog_text = db.TextProperty(required = True)
@@ -44,12 +110,12 @@ class Entry(db.Model):
         self._render_text = self.content.replace('\n', '<br>')
         return render_str("view-entry.html", p = self)
 
-#Render main page that appears with first page load
+# Render main page that appears with first page load
 class MainPage(BlogHandler):
   def get(self):
       self.render("/index.html")
 
-#Render welcome page after sign in
+# Render welcome page after sign in
 class Welcome(BlogHandler):
     def get(self):
         username = self.request.get('username')
@@ -58,7 +124,7 @@ class Welcome(BlogHandler):
         else:
             self.redirect('/register')
 
-#Render blog's front page
+# Render blog's front page
 class BlogFront(BlogHandler):
     def get(self):
         username = self.request.get('username')
@@ -69,7 +135,7 @@ class BlogFront(BlogHandler):
         posts = db.GqlQuery("select * from Entry order by created desc limit 10")
         self.render('front-page.html', posts = posts, is_logged = logged)
 
-#Render something...
+# Render something...
 class PostPage(BlogHandler):
     def get(self, post_id):
         key = db.Key.from_path('Entry', int(post_id), parent=blog_key())
@@ -81,7 +147,7 @@ class PostPage(BlogHandler):
 
         self.render("permalink.html", post = post)
 
-#Render page to write new entries
+# Render page to write new entries
 class NewEntry(BlogHandler):
     def get(self):
         self.render("new-entry.html")
@@ -102,7 +168,7 @@ class NewEntry(BlogHandler):
 
 
 
-#Render sign up page
+# Render sign up page
 class Register(BlogHandler):
     def get(self):
         self.render("register.html")
@@ -137,12 +203,12 @@ class Register(BlogHandler):
         else:
             self.redirect('/welcome?username=' + username)
 
-#Render login page
+# Render login page
 class Login(BlogHandler):
     def get(self):
         self.render("sign-in.html")
 
-#Does the logout process
+# Does the logout process
 #class Logout(BlogHandler):
 
 
