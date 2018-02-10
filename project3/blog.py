@@ -35,6 +35,19 @@ def check_secure_val(secure_val):
     if secure_val == make_secure_val(val):
         return val
 
+# functions for hashing passwords
+# make salt, a random string with x letters
+def make_salt(length=5):
+    return ''.join(random.choice(letters) for x in xrange(length))
+
+# hash the password
+def hash_password(name, pd, salt=None):
+    if not salt:
+        salt = make_salt()
+    hashed_pd = hashlib.sha256(name+pd+salt).hexdigest()
+    return '%s, %s' % (salt, hashed_pd) # return salt and the hased name+pass_salt. store in db later
+
+def
 class BlogHandler(webapp2.RequestHandler):
     def write(self, *a, **kw):
         self.response.out.write(*a, **kw)
@@ -85,7 +98,7 @@ class User (db.Model):
 
     # creates new user and adds to database
     @classmethod
-    def register(cls, name, password, email = NONE):
+    def register(cls, name, password, email = None):
         hashed_pw = make_pw_hash(name, password)     # hash the password
         # create new user object and return it
         u = User(parent = users_key(),
@@ -96,7 +109,9 @@ class User (db.Model):
 
     # logs user in
     @classmethod
-    def login():
+    def login(cls, name, password):
+        user = getByName(name)
+
 
 
 # instance called "ENTRY" (record) with the following "entities" (columns) and data type
@@ -202,6 +217,9 @@ class Register(BlogHandler):
             self.render('register.html', **params)
         else:
             self.redirect('/welcome?username=' + username)
+
+    # if registration was successful
+    def done(self):
 
 # Render login page
 class Login(BlogHandler):
