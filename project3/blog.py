@@ -47,7 +47,14 @@ def hash_password(name, pd, salt=None):
     hashed_pd = hashlib.sha256(name+pd+salt).hexdigest()
     return '%s, %s' % (salt, hashed_pd) # return salt and the hased name+pass_salt. store in db later
 
-def
+# check if password is valid
+def valid_password(name, password, hashed_pd):
+    the_salt = hashed_pd.split(',')[0]
+    if (hashed_pd == hash_password(name, password, the_salt)):
+        return True
+    else:
+        return False
+
 class BlogHandler(webapp2.RequestHandler):
     def write(self, *a, **kw):
         self.response.out.write(*a, **kw)
@@ -71,6 +78,10 @@ class BlogHandler(webapp2.RequestHandler):
         cookie_value = self.request.cookies.get(name) # get cookie according to name
         if (check_secure_val(cookie_value)): # return cookie if cookie exists and is secure
             return cookie_value
+
+    # set cookie during login for user
+    def login():
+        self.set_cookie('user_id', str(user.key().id()))
 
     # check to see if user is logged in
     def initialize(self, *a, **kw):
@@ -111,6 +122,9 @@ class User (db.Model):
     @classmethod
     def login(cls, name, password):
         user = getByName(name)
+        valid = valid_password(name, password, user.hashed_pw)
+        if (user and valid):    # user must exist and password must be valid
+            return user
 
 
 
@@ -225,6 +239,19 @@ class Register(BlogHandler):
 class Login(BlogHandler):
     def get(self):
         self.render("sign-in.html")
+
+    # get username and password and authenticate
+    def post(self):
+        username = self.request.get('username')
+        password = self.request.get('password')
+
+        user = User.login(username, password)
+        if (user):  #redirect to welcome page if login successful
+            self.login(user)
+            self.redirect('/welcome')
+        else:   # login failed, display error message
+            message = "Username or password invalid."
+            self.render("sign-in.html", error_message = message)
 
 # Does the logout process
 #class Logout(BlogHandler):
