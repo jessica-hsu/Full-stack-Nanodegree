@@ -31,7 +31,7 @@ def make_secure_val(val):
 
 # making sure secure value is valid
 def check_secure_val(secure_val):
-    val = secure_val.split("|")[0]
+    val = secure_val.split('|')[0]
     if secure_val == make_secure_val(val):
         return val
 
@@ -83,6 +83,10 @@ class BlogHandler(webapp2.RequestHandler):
     def login():
         self.set_cookie('user_id', str(user.key().id()))
 
+    # logout by deleting cookie. or set cookie = [nothing]
+    def logout():
+        self.response.headers.add_header('Set-Cookie', 'user_id; Path=/')
+
     # check to see if user is logged in
     def initialize(self, *a, **kw):
         webapp2.RequestHandler.initialize(self, *a, **kw)
@@ -125,8 +129,6 @@ class User (db.Model):
         valid = valid_password(name, password, user.hashed_pw)
         if (user and valid):    # user must exist and password must be valid
             return user
-
-
 
 # instance called "ENTRY" (record) with the following "entities" (columns) and data type
 class Entry(db.Model):
@@ -195,8 +197,6 @@ class NewEntry(BlogHandler):
             error = "subject and content, please!"
             self.render("new-entry.html", title=title, blog_text=blog_text, error=error)
 
-
-
 # Render sign up page
 class Register(BlogHandler):
     def get(self):
@@ -209,31 +209,21 @@ class Register(BlogHandler):
         verify = self.request.get('verify')
         email = self.request.get('email')
 
-        params = dict(username = username,
-                      email = email)
 
-        if not valid_username(username):
-            params['error_username'] = "That's not a valid username."
-            have_error = True
-
-        if not valid_password(password):
-            params['error_password'] = "That wasn't a valid password."
-            have_error = True
-        elif password != verify:
-            params['error_verify'] = "Your passwords didn't match."
-            have_error = True
-
-        if not valid_email(email):
-            params['error_email'] = "That's not a valid email."
-            have_error = True
-
-        if have_error:
-            self.render('register.html', **params)
-        else:
-            self.redirect('/welcome?username=' + username)
+        # self.redirect('/welcome?username=' + username)
 
     # if registration was successful
     def done(self):
+        # check if user exists
+        user = User.getByName(self.username)
+
+        if (user):  # user already exists, back to registration page
+            message = "Username already exists."
+            self.render('register.html', error_message = message)
+        else:   # user doesn't exist yet, create user, add to db, redirect to welcome page
+            user = User.register(self.username, self.password, self.email)
+            user.put()
+            self.redirect('/welcome?username=' + username)
 
 # Render login page
 class Login(BlogHandler):
@@ -246,16 +236,18 @@ class Login(BlogHandler):
         password = self.request.get('password')
 
         user = User.login(username, password)
-        if (user):  #redirect to welcome page if login successful
+        if (user):  # redirect to welcome page if login successful
             self.login(user)
-            self.redirect('/welcome')
+            self.redirect('/welcome?username=' + username)
         else:   # login failed, display error message
             message = "Username or password invalid."
             self.render("sign-in.html", error_message = message)
 
 # Does the logout process
-#class Logout(BlogHandler):
-
+class Logout(BlogHandler):
+    def get(self):
+        self.logout()
+        self.redirect('/login')
 
 app = webapp2.WSGIApplication([('/', MainPage),
                                ('/welcome', Welcome),
@@ -263,7 +255,7 @@ app = webapp2.WSGIApplication([('/', MainPage),
                                ('/blog/([0-9]+)', PostPage),
                                ('/blog/newentry', NewEntry),
                                ('/register', Register),
-                               ('/login', Login)#,
-                               #('/logout', Logout)
+                               ('/login', Login),
+                               ('/logout', Logout)
                                ],
                               debug=True)
