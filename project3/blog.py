@@ -1,5 +1,8 @@
 import os
 import re
+import random
+import hashlib
+import hmac
 from string import letters
 
 import webapp2
@@ -27,11 +30,14 @@ def blog_key(name = 'default'):
 
 # for securing values for registration
 def make_secure_val(val):
-    return "%s|%s" % (val, hmac.new(secret, val).hexigest())
+    return "%s|%s" % (val, hmac.new(secret, val).hexdigest())
 
 # making sure secure value is valid
 def check_secure_val(secure_val):
-    val = secure_val.split('|')[0]
+    if (secure_val is not None):
+        val = secure_val.split('|')[0]
+    else:
+        val = ''
     if secure_val == make_secure_val(val):
         return val
 
@@ -125,7 +131,7 @@ class User (db.Model):
     # logs user in
     @classmethod
     def login(cls, name, password):
-        user = getByName(name)
+        user = cls.getByName(name)
         valid = valid_password(name, password, user.hashed_pw)
         if (user and valid):    # user must exist and password must be valid
             return user
@@ -210,7 +216,7 @@ class Register(BlogHandler):
         email = self.request.get('email')
 
 
-        # self.redirect('/welcome?username=' + username)
+        self.redirect('/welcome?username=' + username)
 
     # if registration was successful
     def done(self):
