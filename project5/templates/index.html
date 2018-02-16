@@ -21,12 +21,15 @@
 				<div class="col-sm-2" id="menu">
 					<h3>Categories</h3>
 					<div class="list-group" id="categories">
-						<a href="show-items.html" class="list-group-item">Furniture<span class="badge">3</span></a>
+						{% for c in categories %}
+							<a href="#" class="list-group-item">{{c.name}}</a>
+						{% endfor %}
+						<!-- <a href="show-items.html" class="list-group-item">Furniture<span class="badge">3</span></a>
 						<a href="#" class="list-group-item">Electronics<span class="badge">22</span></a></a>
 						<a href="#" class="list-group-item">Animals<span class="badge">5</span></a></a>
 						<a href="#" class="list-group-item">Stationary<span class="badge">1</span></a></a>
 						<a href="#" class="list-group-item">Tools<span class="badge">0</span></a></a>
-						<a href="#" class="list-group-item">Food<span class="badge">12</span></a></a>
+						<a href="#" class="list-group-item">Food<span class="badge">12</span></a></a> -->
 					</div>
 					<h3>Action</h3>
 					<div class="list-group" id="action-items-categories">

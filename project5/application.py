@@ -3,7 +3,7 @@
 from flask import Flask, render_template, request, redirect, url_for, jsonify
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from database_setup import Base, Catalog, Item
+from database_setup import Base, Category, Item
 
 app = Flask(__name__)
 
@@ -13,50 +13,58 @@ Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
-# Create JSON object for Categories
-@app.route('/category/JSON')
+# global variables - to be used for every page rendering
+# load all categories. To be used in side bar for every page
+all_categories = all_categories = session.query(Category).all()
 
-# Create JSON object for Item
-@app.route('/items/JSON')
+# Create JSON object for Categories
+# @app.route('/category/JSON')
+#
+# # Create JSON object for Item
+# @app.route('/items/JSON')
 
 # Load main home page
 # valid URL for accessing home page
 @app.route('/')
 @app.route('/catalog')
+def load_main_page():
+	# render results to home page
+	return render_template('index.html', categories=all_categories)
+
 
 # View items in selected category
 # valid URL for viewing items of a category
-@app.route('/category/<int:category_id>')
-
-# Add new category
-# valid URL for accessing add category page
-@app.route('/category/add')
-
-# View categories to delete
-# valid URL for viewing categories to delete
-@app.route('/category/delete')
-
-# Delete category
-# valid URL to actually delete category from database
-@app.route('/category/delete/confirm')
-
-# Add new item
-# valid URL to add items
-@app.route('/category/<int:category_id>/add')
-
-# Edit item
-# valid URL to edit item
-@app.route('/category/<int:category_id>/<int:item_id>/edit')
-
-# Delete item
-# valid url to delete item from db
-@app.route('/category/<int:category_id>/<int:item_id>/delete')
-
-# Login Page
-@app.route('/login')
-
-# Logout
-@app.route('/logout')
+# @app.route('/category/<int:category_id>')
+#
+# # Add new category
+# # valid URL for accessing add category page
+# @app.route('/category/add')
+#
+# # View categories to delete
+# # valid URL for viewing categories to delete
+# @app.route('/category/delete')
+#
+# # Delete category
+# # valid URL to actually delete category from database
+# @app.route('/category/delete/confirm')
+#
+# # Add new item
+# # valid URL to add items
+# @app.route('/category/<int:category_id>/add')
+#
+# # Edit item
+# # valid URL to edit item
+# @app.route('/category/<int:category_id>/<int:item_id>/edit')
+#
+# # Delete item
+# # valid url to delete item from db
+# @app.route('/category/<int:category_id>/<int:item_id>/delete')
+#
+# # Login Page
+# @app.route('/login')
+#
+# # Logout
+# @app.route('/logout')
 
 # Main method
 if __name__ == '__main__':
