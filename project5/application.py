@@ -19,32 +19,44 @@ session = DBSession()
 
 # Load main home page
 # valid URL for accessing home page
+@app.route('/')
+@app.route('/catalog')
 
-
+# View items in selected category
+# valid URL for viewing items of a category
+@app.route('/category/<category id here>')
 
 # Add new category
 # valid URL for accessing add category page
+@app.route('/category/add')
 
 # View categories to delete
 # valid URL for viewing categories to delete
+@app.route('/category/delete')
 
 # Delete category
 # valid URL to actually delete category from database
+@app.route('/category/delete/confirm')
 
 # Add new item
 # valid URL to add items
+@app.route('/category/<category id here>/add')
 
 # Edit item
 # valid URL to edit item
+@app.route('/category/<category id>/<item id>/edit')
 
 # Delete item
 # valid url to delete item from db
+@app.route('/category/<category id>/<item id>/delete')
 
 # Login Page
+@app.route('/login')
 
 # Logout
+@app.route('/logout')
 
 # Main method
 if __name__ == '__main__':
 	app.debug = True
-	app.run(host='0.0.0.0', port=5000) 
+	app.run(host='0.0.0.0', port=5000)
