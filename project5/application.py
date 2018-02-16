@@ -14,8 +14,10 @@ DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
 # Create JSON object for Categories
+@app.route('/category/JSON')
 
 # Create JSON object for Item
+@app.route('/items/JSON')
 
 # Load main home page
 # valid URL for accessing home page
@@ -24,7 +26,7 @@ session = DBSession()
 
 # View items in selected category
 # valid URL for viewing items of a category
-@app.route('/category/<category id here>')
+@app.route('/category/<int:category_id>')
 
 # Add new category
 # valid URL for accessing add category page
@@ -40,15 +42,15 @@ session = DBSession()
 
 # Add new item
 # valid URL to add items
-@app.route('/category/<category id here>/add')
+@app.route('/category/<int:category_id>/add')
 
 # Edit item
 # valid URL to edit item
-@app.route('/category/<category id>/<item id>/edit')
+@app.route('/category/<int:category_id>/<int:item_id>/edit')
 
 # Delete item
 # valid url to delete item from db
-@app.route('/category/<category id>/<item id>/delete')
+@app.route('/category/<int:category_id>/<int:item_id>/delete')
 
 # Login Page
 @app.route('/login')
