@@ -1,46 +1,40 @@
-#!/usr/bin/env python
-# continue database setup by populating catalog database with records
+# populate catalog database with dummy database
+# !/usr/bin/env python
 
-import psycopg2
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from database_setup import Base, Catalog, Item
 
-# Open connection to the PostgreSQL database.  Returns a connection
-def open():
-    conn = psycopg2.connect("dbname=catalog")
-    return conn
+engine = create_engine('sqlite:///catalog.db')
+Base.metadata.bind = engine
 
-# commits connection, takes existing connection and cursor and closes them
-def close(conn, cursor):
-    conn.commit()
-    cursor.close()
-    conn.close()
+DBSession = sessionmaker(bind=engine)
+session = DBSession()
 
-# Add the first user to the User table
-def populateUser():
-    conn = open()
-    cursor = conn.cursor()
-    sql = "INSERT INTO user (name, email) VALUES ('admin', 'admin@gmail.com')"
-    cursor.execute(sql)
-    close(conn, cursor)
+# method to add and commit
+def add_to_database(record):
+    session.add(record)
+    session.commit()
 
-# Add a few categories in Category table
-def populateCategory():
-    conn = open()
-    cursor = conn.cursor()
-    sql = "INSERT INTO category (name, created_by) VALUES ()"
-    cursor.execute(sql)
-    close(conn, cursor)
+# Create some Categories
+furniture = Category(name='Furniture')
+add_to_database(furniture)
 
-# Add a few items in each existing category
-def populateItem():
-    conn = open()
-    cursor = conn.cursor()
-    sql = "INSERT INTO item (category, created_by, name) VALUES ()"
-    cursor.execute(sql)
-    close(conn, cursor)
+stationary = Category(name='Stationary')
+add_to_database(stationary)
 
-# main method to execute the functions
-if __name__ == '__main__':
-    populateUser()  # add user
-    populateCategory()  # add categories
-    populateItem()  # add items
-    print "Catalog database populated."
+food = Category(name='Food')
+add_to_database(food)
+
+electronics = Category(name='Electronics')
+add_to_database(electronics)
+
+# Add items to each category
+item = Item(name='Chair', description='Thing you sit on', category_id=1)
+add_to_database(item)
+
+item = Item(name='Table', description='Thing you put things on', category_id=1)
+add_to_database(item)
+
+item = Item(name='Closet', description='Thing you put things in', category_id=1)
+add_to_database(item)
