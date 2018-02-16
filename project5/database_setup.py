@@ -33,7 +33,8 @@ class Item(Base):
 	name = Column(String(200), nullable=False)
 	description = Column(String(500))
 	category_id = Column(Integer, ForeignKey('category.id'))
-	category = relationship(Category)
+	# cascade will delete all items in category if said category gets deleted
+	category = relationship(Category, backref=backref('items', uselist=True, cascade='delete, all'))
 
 	# return as JSON object
 	@property
@@ -42,7 +43,7 @@ class Item(Base):
 			'id': self.id,
 			'name': self.name,
 			'description': self.description,
-			'category_id': self.category_id 
+			'category_id': self.category_id
 		}
 
 engine = create_engine('sqlite:///catalog.db')
