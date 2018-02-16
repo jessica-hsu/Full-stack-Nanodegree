@@ -3,7 +3,7 @@
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from database_setup import Base, Catalog, Item
+from database_setup import Base, Category, Item
 
 engine = create_engine('sqlite:///catalog.db')
 Base.metadata.bind = engine
