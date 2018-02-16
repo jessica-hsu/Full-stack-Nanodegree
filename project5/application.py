@@ -31,7 +31,6 @@ def load_main_page():
 	# render results to home page
 	return render_template('index.html', categories=all_categories)
 
-
 # View items in selected category
 # valid URL for viewing items of a category
 @app.route('/category/<int:category_id>')
@@ -59,13 +58,29 @@ def view_categories_to_delete():
 
 # Delete category
 # valid URL to actually delete category from database
-@app.route('/category/delete/confirm')
+@app.route('/category/<int:category_id>/delete', methods=['GET', 'POST'])
+def delete_category_now(category_id):
+	category_to_delete = session.query(Category).filter(id=category_id).one()
+	if (request.method == 'POST'):
+		session.delete(category_to_delete)
+		session.commit()
+		redirect('/category/delete')	# if successful, go back to see available categories to delete
+	else:
+		redirect('/')	# if not, go back to home page
 
+# Add new item
+# valid URL to add items
+@app.route('/category/<int:category_id>/add', methods=['GET', 'POST'])
+def add_item(category_id):
+	new_item_name = request.form['item-name']
+	new_item_description = request.form['item-description']
+	if (request.method == 'POST'):
+		new_item = Item(name=new_item_name, description=new_item_description, category_id=category_id)
+		session.add(new_item)
+		session.commit()
+	# redirect to see all items in selected category
+	redirect(url_for('view_category_items', category_id=category_id))
 
-# # Add new item
-# # valid URL to add items
-# @app.route('/category/<int:category_id>/add')
-#
 # # Edit item
 # # valid URL to edit item
 # @app.route('/category/<int:category_id>/<int:item_id>/edit')
