@@ -38,3 +38,12 @@ add_to_database(item)
 
 item = Item(name='Closet', description='Thing you put things in', category_id=1)
 add_to_database(item)
+
+item = Item(name='Pencil', description='Thing you write with', category_id=2)
+add_to_database(item)
+
+item = Item(name='Apple', description='That red fruit', category_id=3)
+add_to_database(item)
+
+item = Item(name='iPhone', description='Some fancy phone', category_id=4)
+add_to_database(item)
