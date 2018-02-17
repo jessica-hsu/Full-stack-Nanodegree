@@ -106,6 +106,7 @@ def delete_item(category_id, item_id):
 		session.commit()
 	# redirect to see all items in selected category
 	redirect(url_for('view_category_items', category_id=category_id))
+	
 # # Login Page
 # @app.route('/login')
 #
