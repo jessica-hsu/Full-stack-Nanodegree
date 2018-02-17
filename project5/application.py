@@ -64,7 +64,7 @@ def view_categories_to_delete():
 
 # Delete category
 # valid URL to actually delete category from database
-@app.route('/category/<int:category_id>/delete', methods=['GET', 'POST'])
+@app.route('/category/<category_id>/delete', methods=['GET', 'POST'])
 def delete_category_now(category_id):
 	category_to_delete = session.query(Category).filter_by(id=category_id)
 	if (request.method == 'POST'):
@@ -76,7 +76,7 @@ def delete_category_now(category_id):
 
 # Add new item
 # valid URL to add items
-@app.route('/category/<int:category_id>/add', methods=['GET', 'POST'])
+@app.route('/category/<category_id>/add', methods=['GET', 'POST'])
 def add_item(category_id):
 	new_item_name = request.form['item-name']
 	new_item_description = request.form['item-description']
@@ -89,7 +89,7 @@ def add_item(category_id):
 
 # Edit item
 # valid URL to edit item
-@app.route('/category/<int:category_id>/<int:item_id>/edit', methods=['GET', 'POST'])
+@app.route('/category/<category_id>/<item_id>/edit', methods=['GET', 'POST'])
 def edit_item(category_id, item_id):
 	item_to_edit = session.query(Item).filter_by(id=item_id)
 	new_name = request.form['item-name']
@@ -104,7 +104,7 @@ def edit_item(category_id, item_id):
 
 # Delete item
 # valid url to delete item from db
-@app.route('/category/<int:category_id>/<int:item_id>/delete', methods=['GET', 'POST'])
+@app.route('/category/<category_id>/<item_id>/delete', methods=['GET', 'POST'])
 def delete_item(category_id, item_id):
 	item_to_delete = session.query(Item).filter_by(id=item_id)
 	if (request.method == 'POST'):
