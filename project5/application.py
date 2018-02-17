@@ -81,14 +81,31 @@ def add_item(category_id):
 	# redirect to see all items in selected category
 	redirect(url_for('view_category_items', category_id=category_id))
 
-# # Edit item
-# # valid URL to edit item
-# @app.route('/category/<int:category_id>/<int:item_id>/edit')
-#
-# # Delete item
-# # valid url to delete item from db
-# @app.route('/category/<int:category_id>/<int:item_id>/delete')
-#
+# Edit item
+# valid URL to edit item
+@app.route('/category/<int:category_id>/<int:item_id>/edit', methods=['GET', 'POST'])
+def edit_item(category_id, item_id):
+	item_to_edit = session.query(Item).filter(id=item_id).one()
+	new_name = request.form['item-name']
+	new_description = request.form['item-description']
+	if (request.method == 'POST'):
+		item_to_edit.name = new_name
+		item_to_edit.description = new_item_description
+		session.add(item_to_edit)
+		session.commit()
+	# redirect to see all items in selected category
+	redirect(url_for('view_category_items', category_id=category_id))
+
+# Delete item
+# valid url to delete item from db
+@app.route('/category/<int:category_id>/<int:item_id>/delete', methods=['GET', 'POST'])
+def delete_item(category_id, item_id):
+	item_to_delete = session.query(Item).filter(id=item_id).one()
+	if (request.method == 'POST'):
+		session.delete(item_to_delete)
+		session.commit()
+	# redirect to see all items in selected category
+	redirect(url_for('view_category_items', category_id=category_id))
 # # Login Page
 # @app.route('/login')
 #
