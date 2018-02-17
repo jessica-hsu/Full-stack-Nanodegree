@@ -78,6 +78,7 @@ def delete_category_now(category_id):
 # valid URL to add items
 @app.route('/category/<category_id>/add', methods=['GET', 'POST'])
 def add_item(category_id):
+	category = session.query(Category).filter_by(id=category_id)
 	new_item_name = request.form['item-name']
 	new_item_description = request.form['item-description']
 	if (request.method == 'POST'):
@@ -85,7 +86,7 @@ def add_item(category_id):
 		session.add(new_item)
 		session.commit()
 	# redirect to see all items in selected category
-	redirect(url_for('view_category_items', category_id=category_id))
+	redirect(url_for('view_category_items', category_id=category_id, category_name=category.name))
 
 # Edit item
 # valid URL to edit item
@@ -113,11 +114,15 @@ def delete_item(category_id, item_id):
 	# redirect to see all items in selected category
 	redirect(url_for('view_category_items', category_id=category_id))
 
-# # Login Page
-# @app.route('/login')
-#
-# # Logout
-# @app.route('/logout')
+# Login Page
+@app.route('/login')
+def login():
+	return "login"
+
+# Logout
+@app.route('/logout')
+def logout():
+	return "logout"
 
 # Main method
 if __name__ == '__main__':
