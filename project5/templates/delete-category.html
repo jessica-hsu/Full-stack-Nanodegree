@@ -21,29 +21,26 @@
 				<div class="col-sm-2" id="menu">
 					<h3>Categories</h3>
 					<div class="list-group" id="categories">
-						<a href="show-items.html" class="list-group-item">Furniture<span class="badge">3</span></a>
-						<a href="#" class="list-group-item">Electronics<span class="badge">22</span></a></a>
-						<a href="#" class="list-group-item">Animals<span class="badge">5</span></a></a>
-						<a href="#" class="list-group-item">Stationary<span class="badge">1</span></a></a>
-						<a href="#" class="list-group-item">Tools<span class="badge">0</span></a></a>
-						<a href="#" class="list-group-item">Food<span class="badge">12</span></a></a>
+						{% for c in categories %}
+							<a href="{{url_for('view_category_items',category_id=c.id)}}" class="list-group-item">c.name<a>
+						{% endfor %}
 					</div>
 					<h3>Action</h3>
 					<div class="list-group" id="action-items-categories">
-						<a href="add-category.html" class="list-group-item">Add Category</a>
-						<a href="delete-category.html" class="list-group-item">Delete Category</a>
+						<a href="{{url_for('add_category')}}" class="list-group-item">Add Category</a>
+						<a href="{{url_for('view_categories_to_delete')}}" class="list-group-item">Delete Category</a>
 					</div>
 				</div>
 				<div class="col-sm-10" id="content">
 					<div class="page-header"><h1>Catalog</h1></div>
 					<div id="login-info">
 						<i>Welcome, Random Stranga</i> &nbsp;
-						<button type="button" class="btn btn-xs">Login</button> &nbsp;
-						<button type="button" class="btn btn-xs">Logout</button>
+						<a href="{{url_for('login')}}"><button type="button" class="btn btn-xs">Login</button></a> &nbsp;
+						<a href="{{url_for('logout')}}"><button type="button" class="btn btn-xs">Logout</button></a>
 					</div>
 					<div id="main">
 						<h3>Delete Category</h3>
-						<a href="index.html">Back to main page</a>
+						<a href="{{url_for('load_main_page')}}">Back to main page</a>
 						<br><br>
 						<div id="all-categories" class="table-responsive">
 							<table class="table table-striped">
@@ -51,24 +48,12 @@
 									<tr><th>Category</th><th>Action</th></tr>
 								</thead>
 								<tbody>
-									<tr><td>Furniture</td>
-										<td><a href="#"><button id="delete_c_1" type="button" class="btn btn-danger">Delete</button></a></td>
-									</tr>
-									<tr><td>Electronics</td>
-										<td><a href="#"><button id="delete_c_2" type="button" class="btn btn-danger">Delete</button></a></td>
-									</tr>
-									<tr><td>Animals</td>
-										<td><a href="#"><button id="delete_c_3" type="button" class="btn btn-danger">Delete</button></a></td>
-									</tr>
-									<tr><td>Stationary</td>
-										<td><a href="#"><button id="delete_c_4" type="button" class="btn btn-danger">Delete</button></a></td>
-									</tr>
-									<tr><td>Tools</td>
-										<td><a href="#"><button id="delete_c_5" type="button" class="btn btn-danger">Delete</button></a></td>
-									</tr>
-									<tr><td>Food</td>
-										<td><a href="#"><button id="delete_c_6" type="button" class="btn btn-danger">Delete</button></a></td>
-									</tr>
+									{% for c in categories %}
+										<tr><td>c.name</td><td>
+										<a href="{{url_for('delete_category_now',category_id=c.id)}}">
+											<button type="button" class="btn btn-danger">Danger</button>
+										<a></td></tr>
+									{% endfor %}
 								</tbody>
 							</table>
 						</div>
