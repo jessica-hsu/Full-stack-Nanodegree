@@ -12,7 +12,7 @@
 		<!-- Latest compiled JavaScript -->
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
-		<link rel="stylesheet" href="../static/style.css">
+		<link rel="stylesheet" href="../../static/style.css">
 		<title>Add Item</title>
 	</head>
 	<body>
@@ -22,7 +22,7 @@
 					<h3>Categories</h3>
 					<div class="list-group" id="categories">
 						{% for c in categories %}
-							<a href="{{url_for('view_category_items',category_id=c.id)}}" class="list-group-item">c.name<a>
+							<a href="{{url_for('view_category_items',category_id=c.id)}}" class="list-group-item">{{c.name}}</a>
 						{% endfor %}
 					</div>
 					<h3>Action</h3>
@@ -39,8 +39,8 @@
 						<a href="{{url_for('logout')}}"><button type="button" class="btn btn-xs">Logout</button></a>
 					</div>
 					<div id="main">
-						<h3>{{category_name}}</h3>
-						<a href="{{url_for('view_category_items', category_id=category_id)}}">Back to items page</a>
+						<h3>{{category.name}}</h3>
+						<a href="{{url_for('view_category_items', category_id=category.id)}}">Back to items page</a>
 						<br><br>
 						<form name="add-item-form" id="add-item-form" action="" method="post">
 							<div class="form-group">

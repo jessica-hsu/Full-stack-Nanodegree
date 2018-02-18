@@ -2,7 +2,7 @@
 
 from flask import Flask, render_template, request, redirect, url_for, jsonify
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, scoped_session
 from database_setup import Base, Category, Item
 
 app = Flask(__name__)
@@ -11,11 +11,9 @@ engine = create_engine('sqlite:///catalog.db')
 Base.metadata.bind = engine
 
 DBSession = sessionmaker(bind=engine)
-session = DBSession()
+# if you don't scope it, you will have problems and a huge headache
+session = scoped_session(DBSession)
 
-# global variables - to be used for every page rendering
-# load all categories. To be used in side bar for every page
-all_categories = all_categories = session.query(Category).all()
 
 # Create JSON object for Categories
 @app.route('/category/JSON')
@@ -35,16 +33,19 @@ def itemJSON(category_id):
 @app.route('/catalog')
 def load_main_page():
 	# render results to home page
+	all_categories = session.query(Category).all()
 	return render_template('index.html', categories=all_categories)
 
 # View items in selected category
 # valid URL for viewing items of a category
 @app.route('/category/<category_id>')
 def view_category_items(category_id):
-	current_category = session.query(Category).filter_by(id=category_id)
+	all_categories = session.query(Category).all()
+	current_category = session.query(Category).filter_by(id=category_id).first()
 	# query to retrieve all items under selected category
 	items = session.query(Item).filter_by(category_id=category_id)
-	return render_template('show-items.html',categories=all_categories,items=itemsm, category=current_category)
+	# current_category = session.query(Category).filter_by(id=category_id)
+	return render_template('show-items.html',categories=all_categories,items=items,category=current_category)
 
 # Add new category
 # valid URL for accessing add category page
@@ -57,12 +58,14 @@ def add_category():
 		session.commit()
 		return redirect(url_for('load_main_page'))
 	else:
+		all_categories = session.query(Category).all()
 		return render_template('add-category.html', categories=all_categories)
 
 # View categories to delete
 # valid URL for viewing categories to delete
 @app.route('/category/delete')
 def view_categories_to_delete():
+	all_categories = session.query(Category).all()
 	return render_template('delete-category.html', categories=all_categories)
 
 # Delete category
@@ -73,15 +76,15 @@ def delete_category_now(category_id):
 	if (request.method == 'POST'):
 		session.delete(category_to_delete)
 		session.commit()
-		redirect('/category/delete')	# if successful, go back to see available categories to delete
+		return redirect('/category/delete')	# if successful, go back to see available categories to delete
 	else:
-		redirect('/')	# if not, go back to home page
+		return redirect('/')	# if not, go back to home page
 
 # Add new item
 # valid URL to add items
 @app.route('/category/<category_id>/add', methods=['GET', 'POST'])
 def add_item(category_id):
-	category = session.query(Category).filter_by(id=category_id)
+	category = session.query(Category).filter_by(id=category_id).first()
 	if (request.method == 'POST'):
 		new_item_name = request.form['item-name']
 		new_item_description = request.form['item-description']
@@ -89,9 +92,10 @@ def add_item(category_id):
 		session.add(new_item)
 		session.commit()
 		# redirect to see all items in selected category
-		redirect(url_for('view_category_items', category_id=category_id, category_name=category.name))
+		return redirect(url_for('view_category_items', category_id=category_id, category_name=category.name))
 	else:
-		render_template('add-item.html', category=category)
+		all_categories = session.query(Category).all()
+		return render_template('add-item.html', categories=all_categories,category=category)
 
 # Edit item
 # valid URL to edit item
@@ -106,9 +110,11 @@ def edit_item(category_id, item_id):
 		session.add(item_to_edit)
 		session.commit()
 		# redirect to see all items in selected category
-		redirect(url_for('view_category_items', category_id=category_id))
+		return redirect(url_for('view_category_items', category_id=category_id))
 	else:
-		render_template('edit-item.html', item=item_to_edit)
+		all_categories = session.query(Category).all()
+		return render_template('edit-item.html', categories=all_categories, item=item_to_edit,
+								category_id=category_id, item_id=item_id)
 
 # Delete item
 # valid url to delete item from db
@@ -119,7 +125,7 @@ def delete_item(category_id, item_id):
 		session.delete(item_to_delete)
 		session.commit()
 	# redirect to see all items in selected category
-	redirect(url_for('view_category_items', category_id=category_id))
+	return redirect(url_for('view_category_items', category_id=category_id))
 
 # Login Page
 @app.route('/login')
