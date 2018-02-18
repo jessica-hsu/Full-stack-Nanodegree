@@ -7,6 +7,24 @@ from sqlalchemy import create_engine
 
 Base = declarative_base()
 
+# create table to hold users
+class User(Base):
+	__tablename__ = 'user'
+
+	# column names
+	id = Column(Integer, primary_key=True)
+	email = Column(String(250), nullable=False)
+	name = Column (String(250), nullable=False)
+
+	# return as JSON object
+	@property
+	def serialize(self):
+		return {
+			'id': self.id,
+			'name': self.name,
+			'email': self.email
+		}
+
 # create table for categories
 class Category(Base):
 	__tablename__ = 'category'
@@ -14,6 +32,9 @@ class Category(Base):
 	# column names
 	id = Column(Integer, primary_key=True)
 	name = Column(String(200), nullable=False)
+	user_id = Column(Integer, ForeignKey('user.id'))
+	# cascade will delete all items in category if said category gets deleted
+	user = relationship(User, backref=backref('categories', uselist=True, cascade='delete, all'))
 
 	# return as JSON object
 	@property
@@ -35,6 +56,8 @@ class Item(Base):
 	category_id = Column(Integer, ForeignKey('category.id'))
 	# cascade will delete all items in category if said category gets deleted
 	category = relationship(Category, backref=backref('items', uselist=True, cascade='delete, all'))
+	user_id = Column(Integer, ForeignKey('user.id'))
+	user = relationship(User, backref=backref('items', uselist=True, cascade='delete, all'))
 
 	# return as JSON object
 	@property
