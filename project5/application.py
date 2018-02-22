@@ -57,11 +57,16 @@ def view_category_items(category_id):
 	current_category = session.query(Category).filter_by(id=category_id).first()
 	# query to retrieve all items under selected category
 	items = session.query(Item).filter_by(category_id=category_id)
-	# current_category = session.query(Category).filter_by(id=category_id)
-	return render_template('show-items.html',categories=all_categories,items=items,category=current_category)
+	if ('name' in login_session):
+		logged_in_name = login_session['name']
+	else:
+		logged_in_name = "Random Stranga"
+	return render_template('show-items.html',categories=all_categories,items=items
+						   ,category=current_category, the_user_name=logged_in_name)
 
 # Add new category
 # valid URL for accessing add category page
+# LOGIN REQUIRED
 @app.route('/category/add', methods=['GET', 'POST'])
 def add_category():
 	if (request.method == 'POST'):	# post to database when user clicks submit
@@ -69,29 +74,40 @@ def add_category():
 		new_category = Category(name=new_name)
 		session.add(new_category)
 		session.commit()
-		return redirect(url_for('load_main_page'))
+		return redirect(url_for('load_main_page', the_user_name=login_session['name']))
 	else:
 		all_categories = session.query(Category).all()
-		return render_template('add-category.html', categories=all_categories)
+		if ('name' in login_session):
+			logged_in_name = login_session['name']
+		else:
+			logged_in_name = "Random Stranga"
+		return render_template('add-category.html', categories=all_categories, the_user_name=logged_in_name)
 
 # View categories to delete
 # valid URL for viewing categories to delete
+# LOGIN REQUIRED
 @app.route('/category/delete')
 def view_categories_to_delete():
 	all_categories = session.query(Category).all()
-	return render_template('delete-category.html', categories=all_categories)
+	if ('name' in login_session):
+		logged_in_name = login_session['name']
+	else:
+		logged_in_name = "Random Stranga"
+	return render_template('delete-category.html', categories=all_categories, the_user_name=logged_in_name)
 
 # Delete category
 # valid URL to actually delete category from database
+# LOGIN REQUIRED
 @app.route('/category/<category_id>/delete')
 def delete_category_now(category_id):
 	category_to_delete = session.query(Category).filter_by(id=category_id).first()
 	session.delete(category_to_delete)
 	session.commit()
-	return redirect('/category/delete')	# if successful, go back to see available categories to delete
+	return redirect(url_for('view_categories_to_delete', the_user_name=login_session['name']))	# if successful, go back to see available categories to delete
 
 # Add new item
 # valid URL to add items
+# LOGIN REQUIRED
 @app.route('/category/<category_id>/add', methods=['GET', 'POST'])
 def add_item(category_id):
 	category = session.query(Category).filter_by(id=category_id).first()
@@ -102,13 +118,18 @@ def add_item(category_id):
 		session.add(new_item)
 		session.commit()
 		# redirect to see all items in selected category
-		return redirect(url_for('view_category_items', category_id=category_id, category_name=category.name))
+		return redirect(url_for('view_category_items', category_id=category_id, category_name=category.name, the_user_name=login_session['name']))
 	else:
 		all_categories = session.query(Category).all()
-		return render_template('add-item.html', categories=all_categories,category=category)
+		if ('name' in login_session):
+			logged_in_name = login_session['name']
+		else:
+			logged_in_name = "Random Stranga"
+		return render_template('add-item.html', categories=all_categories,category=category, the_user_name=logged_in_name)
 
 # Edit item
 # valid URL to edit item
+# LOGIN REQUIRED
 @app.route('/category/<category_id>/<item_id>/edit', methods=['GET', 'POST'])
 def edit_item(category_id, item_id):
 	category = session.query(Category).filter_by(id=category_id).first()
@@ -121,21 +142,26 @@ def edit_item(category_id, item_id):
 		session.add(item_to_edit)
 		session.commit()
 		# redirect to see all items in selected category
-		return redirect(url_for('view_category_items', category_id=category_id))
+		return redirect(url_for('view_category_items', category_id=category_id, the_user_name=login_session['name']))
 	else:
 		all_categories = session.query(Category).all()
+		if ('name' in login_session):
+			logged_in_name = login_session['name']
+		else:
+			logged_in_name = "Random Stranga"
 		return render_template('edit-item.html', categories=all_categories, item=item_to_edit,
-								category=category, item_id=item_id)
+								category=category, item_id=item_id, the_user_name=logged_in_name)
 
 # Delete item
 # valid url to delete item from db
+# LOGIN REQUIRED
 @app.route('/category/<category_id>/<item_id>/delete')
 def delete_item(category_id, item_id):
 	item_to_delete = session.query(Item).filter_by(id=item_id).first()
 	session.delete(item_to_delete)
 	session.commit()
 	# redirect to see all items in selected category
-	return redirect(url_for('view_category_items', category_id=category_id))
+	return redirect(url_for('view_category_items', category_id=category_id, the_user_name=login_session['name']))
 
 # Login Page
 @app.route('/login')

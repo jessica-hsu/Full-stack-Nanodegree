@@ -34,9 +34,12 @@
 				<div class="col-sm-10" id="content">
 					<div class="page-header"><h1>Catalog</h1></div>
 					<div id="login-info">
-						<i>Welcome, Random Stranga</i> &nbsp;
-						<a href="{{url_for('login')}}"><button type="button" class="btn btn-xs">Login</button></a> &nbsp;
-						<a href="{{url_for('logout')}}"><button type="button" class="btn btn-xs">Logout</button></a>
+						<i>Welcome, {{the_user_name}}</i>
+						{% if 'name' in session %}
+							<a href="{{url_for('logout')}}"><button type="button" class="btn btn-sm">Logout</button></a>
+						{% else %}
+							<a href="{{url_for('login')}}"><button type="button" class="btn btn-sm">Login</button></a>
+						{% endif %}
 					</div>
 					<div id="{{category.name}}">
 						<h3>{{category.name}}</h3>
