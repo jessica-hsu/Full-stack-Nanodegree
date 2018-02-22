@@ -88,12 +88,16 @@ def add_category():
 # LOGIN REQUIRED
 @app.route('/category/delete')
 def view_categories_to_delete():
-	all_categories = session.query(Category).all()
 	if ('name' in login_session):
 		logged_in_name = login_session['name']
+		deleted_categories = session.query(Category).filter_by(user_id=login_session['id']).all()
+		all_categories = session.query(Category).all()
+		return render_template('delete-category.html', categories=all_categories, deleted=deleted_categories,
+								the_user_name=logged_in_name)
 	else:
 		logged_in_name = "Random Stranga"
-	return render_template('delete-category.html', categories=all_categories, the_user_name=logged_in_name)
+		all_categories = session.query(Category).all()
+		return render_template('delete-category.html', categories=all_categories, the_user_name=logged_in_name)
 
 # Delete category
 # valid URL to actually delete category from database
