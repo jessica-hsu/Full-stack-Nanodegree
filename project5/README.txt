@@ -1,4 +1,4 @@
 Place your catalog project in this directory.
 
 
-sudo pip install python-linkedin
+sudo pip install flask_github
