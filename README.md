@@ -11,3 +11,6 @@
 ## Project 4: Design A Tournament Results Database
 >In this project, you’ll be writing a Python module that uses the PostgreSQL database to keep track of players and matches in a game tournament.
 >You will develop a database schema to store the game matches between players. You will then write a Python module to rank the players and pair them up in matches in a tournament. (From Udacity)
+
+## Project 5: Build an Item Catalog Application
+>You will develop an application that provides a list of items within a variety of categories as well as provide a user registration and authentication system. Registered users will have the ability to post, edit and delete their own items. (From Udacity)
