@@ -15,7 +15,6 @@ class User(Base):
 	id = Column(Integer, primary_key=True)
 	email = Column(String(250), nullable=False)
 	name = Column(String(250), nullable=False)
-	access_token = Column(String(300))
 
 	# return as JSON object
 	@property
