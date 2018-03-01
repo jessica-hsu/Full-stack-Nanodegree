@@ -1,6 +1,8 @@
 # !/usr/bin/env python
 
-from flask import Flask, render_template, request, redirect, url_for, jsonify, session as login_session, flash, g
+from flask import (Flask, render_template, request, redirect,
+                    url_for, jsonify, session as login_session,
+                    flash)
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
 from database_setup import Base, Category, Item, User
@@ -26,21 +28,18 @@ DEBUG = True
 app.debug = DEBUG
 app.secret_key = SECRET_KEY
 oauth = OAuth()
-google = oauth.remote_app('google',
-                          base_url='https://www.google.com/accounts/',
-                          authorize_url='https://accounts.google.com/o/oauth2/auth',
-                          request_token_url=None,
-                          request_token_params={'scope': 'https://www.googleapis.com/auth/userinfo.email',
-                                                'response_type': 'code'},
-                          access_token_url='https://accounts.google.com/o/oauth2/token',
-                          access_token_method='POST',
-                          access_token_params={'grant_type': 'authorization_code'},
-                          consumer_key=GOOGLE_CLIENT_ID,
-                          consumer_secret=GOOGLE_CLIENT_SECRET)
-# app.config['SECRET_KEY'] = "`[i=H`fe3}DP/be/FyhE:--9v|AdTqt.j@EJlfm/Um?pZ`KJy&(dp7,719WnM})"
-# app.config['GITHUB_CLIENT_ID'] = 'e2332e9465c05cad38de'
-# app.config['GITHUB_CLIENT_SECRET'] = '04aa5cc05c9aa1079e1f7d78327e2cdcc8ef73a2'
-# github = GitHub(app)
+google = oauth.remote_app(
+    'google',
+    base_url='https://www.google.com/accounts/',
+    authorize_url='https://accounts.google.com/o/oauth2/auth',
+    request_token_url=None,
+    request_token_params={'scope': 'https://www.googleapis.com/auth/userinfo.email',
+                          'response_type': 'code'},
+    access_token_url='https://accounts.google.com/o/oauth2/token',
+    access_token_method='POST',
+    access_token_params={'grant_type': 'authorization_code'},
+    consumer_key=GOOGLE_CLIENT_ID,
+    consumer_secret=GOOGLE_CLIENT_SECRET)
 
 # Create JSON object for Categories
 @app.route('/category/JSON')
@@ -50,8 +49,8 @@ def categoryJSON():
 
 # Create JSON object for Item
 @app.route('/items/JSON')
-def itemJSON(category_id):
-	item = session.query(Item).filter_by(category_id=category_id)
+def itemJSON():
+	item = session.query(Item).all()
 	return jsonify(item=[i.serialize for i in item])
 
 # Load main home page
@@ -64,7 +63,9 @@ def load_main_page():
 		logged_in_name = login_session['name']
 	else:
 		logged_in_name = "Random Stranga"
-	return render_template('index.html', categories=all_categories, the_user_name=logged_in_name)
+	return render_template('index.html',
+                            categories=all_categories,
+                            the_user_name=logged_in_name)
 
 # View items in selected category
 # valid URL for viewing items of a category
@@ -96,9 +97,11 @@ def add_category():
 		all_categories = session.query(Category).all()
 		if ('name' in login_session):
 			logged_in_name = login_session['name']
+            return render_template('add-category.html',
+                                    categories=all_categories,
+                                    the_user_name=logged_in_name)
 		else:
-			logged_in_name = "Random Stranga"
-		return render_template('add-category.html', categories=all_categories, the_user_name=logged_in_name)
+            return redirect(url_for('login'))
 
 # View categories to delete
 # valid URL for viewing categories to delete
@@ -109,22 +112,27 @@ def view_categories_to_delete():
 		logged_in_name = login_session['name']
 		deleted_categories = session.query(Category).filter_by(user_id=login_session['id']).all()
 		all_categories = session.query(Category).all()
-		return render_template('delete-category.html', categories=all_categories, deleted=deleted_categories,
-								the_user_name=logged_in_name)
+		return render_template('delete-category.html', categories=all_categories,
+                                deleted=deleted_categories, the_user_name=logged_in_name)
 	else:
-		logged_in_name = "Random Stranga"
-		all_categories = session.query(Category).all()
-		return render_template('delete-category.html', categories=all_categories, the_user_name=logged_in_name)
+		return redirect(url_for('login'))
 
 # Delete category
 # valid URL to actually delete category from database
 # LOGIN REQUIRED
 @app.route('/category/<category_id>/delete')
 def delete_category_now(category_id):
-	category_to_delete = session.query(Category).filter_by(id=category_id).first()
-	session.delete(category_to_delete)
-	session.commit()
-	return redirect(url_for('view_categories_to_delete', the_user_name=login_session['name']))	# if successful, go back to see available categories to delete
+    if ('name' in login_session):
+		category_to_delete = session.query(Category).filter_by(id=category_id).first()
+        # check to see if it is your category_id
+        if (category_to_delete.user_id != login_session['id']):
+            flash("You can only delete categories you created")
+        else:
+            session.delete(category_to_delete)
+            session.commit()
+        return redirect(url_for('view_categories_to_delete', the_user_name=login_session['name']))
+	else:
+		return redirect(url_for('login'))
 
 # Add new item
 # valid URL to add items
@@ -135,19 +143,27 @@ def add_item(category_id):
 	if (request.method == 'POST'):
 		new_item_name = request.form['item-name']
 		new_item_description = request.form['item-description']
-		new_item = Item(name=new_item_name, description=new_item_description, category_id=category_id, user_id=login_session['id'])
+		new_item = Item(name=new_item_name,
+                        description=new_item_description,
+                        category_id=category_id,
+                        user_id=login_session['id'])
 		session.add(new_item)
 		session.commit()
 		# redirect to see all items in selected category
-		return redirect(url_for('view_category_items', category_id=category_id, category_name=category.name, the_user_name=login_session['name']))
+		return redirect(url_for('view_category_items',
+                                category_id=category_id,
+                                category_name=category.name,
+                                the_user_name=login_session['name']))
 	else:
 		all_categories = session.query(Category).all()
 		if ('name' in login_session):
 			logged_in_name = login_session['name']
-			return render_template('add-item.html', categories=all_categories,category=category, the_user_name=logged_in_name)
+			return render_template('add-item.html',
+                                    categories=all_categories,
+                                    category=category,
+                                    the_user_name=logged_in_name)
 		else:
-			logged_in_name = "Random Stranga"
-		return render_template('add-item.html', categories=all_categories,category=category, the_user_name=logged_in_name)
+			return redirect(url_for('login'))
 
 # Edit item
 # valid URL to edit item
@@ -157,33 +173,53 @@ def edit_item(category_id, item_id):
 	category = session.query(Category).filter_by(id=category_id).first()
 	item_to_edit = session.query(Item).filter_by(id=item_id).first()
 	if (request.method == 'POST'):
-		new_name = request.form['item-name']
-		new_description = request.form['item-description']
-		item_to_edit.name = new_name
-		item_to_edit.description = new_description
-		session.add(item_to_edit)
-		session.commit()
+        # check to see if item was created by user
+        if (item_to_edit.user_id != login_session['id']):
+            flash("You can only edit your own items")
+        else:
+            new_name = request.form['item-name']
+            new_description = request.form['item-description']
+            item_to_edit.name = new_name
+            item_to_edit.description = new_description
+            session.add(item_to_edit)
+            session.commit()
 		# redirect to see all items in selected category
-		return redirect(url_for('view_category_items', category_id=category_id, the_user_name=login_session['name']))
+		return redirect(url_for('view_category_items', category_id=category_id,
+                                the_user_name=login_session['name']))
 	else:
 		all_categories = session.query(Category).all()
 		if ('name' in login_session):
 			logged_in_name = login_session['name']
+            return render_template('edit-item.html',
+                                    categories=all_categories,
+                                    item=item_to_edit,
+                                    category=category,
+                                    item_id=item_id,
+                                    the_user_name=logged_in_name)
 		else:
 			logged_in_name = "Random Stranga"
-		return render_template('edit-item.html', categories=all_categories, item=item_to_edit,
-								category=category, item_id=item_id, the_user_name=logged_in_name)
+            return redirect(url_for('login'))
 
 # Delete item
 # valid url to delete item from db
 # LOGIN REQUIRED
 @app.route('/category/<category_id>/<item_id>/delete')
 def delete_item(category_id, item_id):
-	item_to_delete = session.query(Item).filter_by(id=item_id).first()
-	session.delete(item_to_delete)
-	session.commit()
-	# redirect to see all items in selected category
-	return redirect(url_for('view_category_items', category_id=category_id, the_user_name=login_session['name']))
+    # check if user is logged in
+    if ('name' in login_session):
+        item_to_delete = session.query(Item).filter_by(id=item_id).first()
+        # check to see if user is the one who created this
+        if (item_to_delete.id != login_session['id']):
+            flash("You can only delete items you created.")
+        else:
+            session.delete(item_to_delete)
+            session.commit()
+        # redirect to see all items in selected category
+    	return redirect(url_for('view_category_items',
+                                category_id=category_id,
+                                the_user_name=login_session['name']))
+    else:
+        return redirect(url_for('login'))
 
 # Login Page
 @app.route('/login')
