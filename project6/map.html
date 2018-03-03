@@ -1,18 +1,89 @@
-<!-- Description: A map with clickable points that display extra information when you click on it. Search bar on the side. -->
-<html DOCTYPE!>
+<html>
   <head>
     <meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<!-- Latest compiled and minified CSS -->
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-		<!-- jQuery library -->
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-		<!-- Latest compiled JavaScript -->
-		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-		<link rel="stylesheet" href="css/style.css">
-		<title>Neighborhood Map</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- KNOCKOUT.JS -->
+    <script src = "https://ajax.aspnetcdn.com/ajax/knockout/knockout-3.1.0.js"
+      type = "text/javascript"></script>
+    <!-- W3.CSS FRAMEWORK -->
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <!-- BOOTSTRAP -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    <style type="text/css">
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+      #map {
+        height: 100%;
+      }
+    </style>
   </head>
-  
   <body>
+    <div id="map"></div>
+    <!-- MODAL TO DISPLAY LOCAITON INFO -->
+    <div id="information-modal" class="modal fade" role="dialog">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+          </div>
+          <div class="modal-body">
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script type="text/javascript">
+      var map;
+      /* LOAD MAP */
+      function initMap() {
+        /* CREATE MAP */
+        map = new google.maps.Map(document.getElementById('map'), {
+          center: {lat: 32.981539, lng: -96.908635},
+          zoom: 15
+        });
+        /* ARRAY TO HOLD ALL THE MARKS */
+        var landmarks = []
+        /* ARRAY OF LOCATION ATTRIBUTES AS OBJECTS */
+        var landmark_info = [
+          {title: "Daiso Japan", position: {lat: 32.981539, lng: -96.908635}},
+          {title: "H Mart", position: {lat: 32.985835, lng: -96.910009}},
+          {title: "Caffebene", position: {lat: 32.983966, lng: -96.911424}},
+          {title: "Chick-fil-A", position: {lat: 32.986195, lng: -96.909300}},
+          {title: "Java Gaming Cafe", position: {lat: 32.988245, lng: -96.910358}},
+          {title: "Walmart", position: {lat: 32.985984, lng: -96.905989}}
+        ]
+        /* LOAD LOCATION MARKERS AND STORE IN MARKER ARRAY */
+        for (i=0; i<landmark_info.length; i++) {
+          var marker = new google.maps.Marker({
+            position: landmark_info[i].position,
+            title: landmark_info[i].title,
+            map: map
+          });
+          /*ADD LISTENER. OPENS MODAL TO SHOW MORE INFO*/
+          marker.addListener("click", function() {
+            show_location_info(this);
+          });
+          landmarks.push(marker);
+        }
+
+      }
+
+      /* AJAX TO 3rd PARTY API TO GET MORE INFO. LOAD LOCATION INFO TO MODAL */
+      function show_location_info(marker) {
+        $("#information-modal").modal();
+      }
+    </script>
+    <!--GOOGLE MAPS API KEY-->
+    <script async defer
+      src="https://maps.googleapis.com/maps/api/js?v=3&key=AIzaSyC1K1093KIoWuDlnhvx4KFLPzfiDfX-pRo&callback=initMap">
+    </script>
   </body>
 </html>
