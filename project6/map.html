@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-
+    <title>Neighborhood Map</title>
     <style type="text/css">
       html, body {
         height: 100%;
@@ -20,10 +20,39 @@
       }
       #map {
         height: 100%;
+        z-index: 1;
       }
+
+      #navigation {
+        z-index: 2;
+        width: 300px;
+        color: white;
+        background-color: rgb(71, 73, 76);
+      }
+
+      #navButton {
+        z-index: 2;
+        width: auto;
+      }
+
     </style>
   </head>
   <body>
+    <div class="w3-sidebar w3-bar-block w3-collapse w3-card w3-animate-left" id="navigation">
+      <button class="w3-bar-item w3-button w3-large w3-hide-large" onclick="w3_close()">Close &times;</button>
+      <div id="navigation-title"> Carollton, Texas</div>
+      <label for="search-box">Search</label>
+      <input id="search-box" class="form-control" type="text" placeholder="Enter location name">
+      <br>
+      <label for="filters">Filter</label>
+      <select id="filters">
+        <option value="cafe">Cafés</option>
+        <option value="shops">Shops</option>
+        <option value="service">Services</option>
+        <option value="restaurant">Restaurant</option>
+      </select>
+    </div>
+    <button type="button" class="w3-button w3-xlarge w3-hide-large" id="navButton" onclick="w3_open()">&#9776;</button>
     <div id="map"></div>
     <!-- MODAL TO DISPLAY LOCAITON INFO -->
     <div id="information-modal" class="modal fade" role="dialog">
@@ -74,12 +103,32 @@
           landmarks.push(marker);
         }
 
-      }
+        /* ALLOW MAP TO RESIZE AUTOMATICALLY WHEN SCREEN RESIZES */
+        google.maps.event.addDomListener(window, "resize", function() {
+          var center = map.getCenter();
+          google.maps.event.trigger(map, "resize");
+          map.setCenter(center);
+        });
+
+      } // END OF MAP INITMAP() FUNCTION
 
       /* AJAX TO 3rd PARTY API TO GET MORE INFO. LOAD LOCATION INFO TO MODAL */
       function show_location_info(marker) {
         $("#information-modal").modal();
       }
+      function w3_open() {
+        document.getElementById("navigation").style.display = "block";
+      }
+      function w3_close() {
+        document.getElementById("navigation").style.display = "none";
+      }
+
+      /* KNOCKOUT VIEW MODEL */
+      function AppViewModel() {
+
+      }
+      /* ACTIVATE KNOCKOUT.JS VIEW MODEL */
+      ko.applyBindings(new AppViewModel());
     </script>
     <!--GOOGLE MAPS API KEY-->
     <script async defer
