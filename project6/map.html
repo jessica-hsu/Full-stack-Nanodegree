@@ -43,7 +43,10 @@
       <div id="navigation-title"> Carrollton, Texas</div>
       <label for="search-box">Search</label>
       <span class="glyphicon glyphicon-search"></span>
-      <input id="search-box" class="form-control" type="text" placeholder="Enter location name">
+      <input id="search-box" class="form-control" type="text" placeholder="Enter location name"
+       data-bind= "value: filter, value">
+      <ul id="full-list" data-bind="foreach: locations">
+      </ul>
       <br>
       <label for="filters">Filter</label>
       <select id="filters">
