@@ -61,48 +61,54 @@
       var map;
       /* LOAD MAP */
       function initMap() {
-        /* CREATE MAP */
-        map = new google.maps.Map(document.getElementById('map'), {
-          center: {lat: 32.981539, lng: -96.908635},
-          zoom: 15
-        });
-        /* CREATE WINDOW TO SHOW INFO WHEN CLICK ON MARKER*/
-        var infoWindow = new google.maps.InfoWindow();
-        /* ARRAY TO HOLD ALL THE MARKS */
-        var landmarks = []
-        /* ARRAY OF LOCATION ATTRIBUTES AS OBJECTS */
-        var landmark_info = [
-          {title: "Daiso Japan", position: {lat: 32.981539, lng: -96.908635}},
-          {title: "H Mart", position: {lat: 32.985835, lng: -96.910009}},
-          {title: "Caffebene", position: {lat: 32.983966, lng: -96.911424}},
-          {title: "Chick-fil-A", position: {lat: 32.986195, lng: -96.909300}},
-          {title: "Java Gaming Cafe", position: {lat: 32.988245, lng: -96.910358}},
-          {title: "Walmart", position: {lat: 32.985984, lng: -96.905989}}
-        ]
-        /* LOAD LOCATION MARKERS AND STORE IN MARKER ARRAY */
-        for (i=0; i<landmark_info.length; i++) {
-          var marker = new google.maps.Marker({
-            position: landmark_info[i].position,
-            title: landmark_info[i].title,
-            animation: google.maps.Animation.DROP,
-            map: map
+        try {
+          /* CREATE MAP */
+          map = new google.maps.Map(document.getElementById('map'), {
+            center: {lat: 32.981539, lng: -96.908635},
+            zoom: 15
           });
-          /*ADD LISTENER. OPENS MODAL TO SHOW MORE INFO*/
-          marker.addListener("click", function() {
-            show_location_info(this, infoWindow);
+          /* CREATE WINDOW TO SHOW INFO WHEN CLICK ON MARKER*/
+          var infoWindow = new google.maps.InfoWindow();
+          /* ARRAY TO HOLD ALL THE MARKS */
+          var landmarks = []
+          /* ARRAY OF LOCATION ATTRIBUTES AS OBJECTS */
+          var landmark_info = [
+            {title: "Daiso Japan", position: {lat: 32.981539, lng: -96.908635}},
+            {title: "H Mart", position: {lat: 32.985835, lng: -96.910009}},
+            {title: "Caffebene", position: {lat: 32.983966, lng: -96.911424}},
+            {title: "Chick-fil-A", position: {lat: 32.986195, lng: -96.909300}},
+            {title: "Java Gaming Cafe", position: {lat: 32.988245, lng: -96.910358}},
+            {title: "Walmart", position: {lat: 32.985984, lng: -96.905989}}
+          ]
+          /* LOAD LOCATION MARKERS AND STORE IN MARKER ARRAY */
+          for (i=0; i<landmark_info.length; i++) {
+            var marker = new google.maps.Marker({
+              position: landmark_info[i].position,
+              title: landmark_info[i].title,
+              animation: google.maps.Animation.DROP,
+              map: map
+            });
+            /*ADD LISTENER. OPENS MODAL TO SHOW MORE INFO*/
+            marker.addListener("click", function() {
+              show_location_info(this, infoWindow);
+            });
+            landmarks.push(marker);
+          }
+
+          /* ALLOW MAP TO RESIZE AUTOMATICALLY WHEN SCREEN RESIZES */
+          google.maps.event.addDomListener(window, "resize", function() {
+            var center = map.getCenter();
+            google.maps.event.trigger(map, "resize");
+            map.setCenter(center);
           });
-          landmarks.push(marker);
+
+          /* ACTIVATE KNOCKOUT.JS VIEW MODEL */
+          ko.applyBindings(new MapViewModel());
+
         }
-
-        /* ALLOW MAP TO RESIZE AUTOMATICALLY WHEN SCREEN RESIZES */
-        google.maps.event.addDomListener(window, "resize", function() {
-          var center = map.getCenter();
-          google.maps.event.trigger(map, "resize");
-          map.setCenter(center);
-        });
-
-        /* ACTIVATE KNOCKOUT.JS VIEW MODEL */
-        ko.applyBindings(new MapViewModel());
+        catch(error) {
+          alert("Google maps failed to load.");
+        }
 
       } // END OF MAP INITMAP() FUNCTION
 
@@ -127,7 +133,60 @@
           data: DATA_PARAMS,
           dataType: "json",
           success: function(data) {
-            console.log(data);
+            /* ADD IN EXTRA INFO FROM FOURSQUARE. IF-ELSE THERE IN CASE
+            SOME ATTRIBUTES ARE NOT RETURNED FROM JSON OBJECT */
+            var category = "<strong>Category: </strong>: N/A <br>";
+            var phone = "<strong>Phone: </strong>: N/A <br>";
+            var twitter = "<strong>Twitter Handle: </strong>: N/A <br>";
+            var facebook = "<strong>Facebook ID: </strong>: N/A <br>";
+            var url = "<strong>Website: </strong>: N/A <br>";
+            var menu = "<strong>Menu: </strong>: N/A <br>";
+            var user_checkin = "<strong>Checkin Count: </strong>: N/A <br>";
+            /* GET CATEGORY*/
+            console.log(data['response']['venues'][0]['categories'] != undefined);
+            if (data['response']['venues'][0]['categories'] != undefined) {
+              cat = data['response']['venues'][0]['categories'][0]['name'];
+              category = "<strong>Category: </strong>" + cat + "<br>";
+            }
+            /* GET CONTACT INFO */
+            if (data['response']['venues'][0]['contact'] != undefined) {
+               if (data['response']['venues'][0]['contact']['formattedPhone'] != undefined) {
+                 var phone_num = data['response']['venues'][0]['contact']['formattedPhone'];
+                 phone = "<strong>Phone: </strong>" + phone_num + "<br>";
+               }
+               if (data['response']['venues'][0]['contact']['twitter'] != undefined) {
+                 var twitter_id = data['response']['venues'][0]['contact']['twitter'];
+                 phone = "<strong>Twitter Handle: </strong>@" + twitter_id + "<br>"
+               }
+               if (data['response']['venues'][0]['contact']['facebookUsername'] != undefined) {
+                 var fb_name = data['response']['venues'][0]['contact']['facebookUsername'];
+                 facebook = "<strong>Facebook ID: </strong>" + fb_name + "<br>"
+               }
+            }
+            /* GET WEBSITE LINK */
+            if (data['response']['venues'][0]['url'] != undefined) {
+              the_url = data['response']['venues'][0]['url'];
+              url = "<strong>Website: </strong><a href='" + the_url + "'>Website</a><br>";
+            }
+            /* GET MENU LINK */
+            if (data['response']['venues'][0]['menu'] != undefined) {
+              m = data['response']['venues'][0]['menu']['url']
+              menu = "<strong>Menu: </strong><a href='" + m + "'>Menu</a><br>";
+            }
+            /* GET USER CHECKIN NUMBER*/
+            if (data['response']['venues'][0]['stats']['checkinsCount'] != undefined) {
+              num = data['response']['venues'][0]['stats']['checkinsCount'];
+              user_checkin = "<strong>Checkin Count: </strong>" + num + "<br>";
+            }
+            var content = "<strong>Location: </strong>" + marker.title + "<br>"
+                          + category + phone + twitter + facebook
+                          + url + menu + user_checkin;
+            w.setContent(content);
+            marker.setAnimation(google.maps.Animation.BOUNCE);
+            setTimeout(function() {
+    			       marker.setAnimation(null);
+    		    }, 2000);
+            w.open(map, marker);
           },
           error: function(xhr) {
             alert("Error in loading data from FourSquare");
@@ -137,14 +196,8 @@
           }
         });
 
-        var content = "<strong>Location: </strong>" + marker.title + "<br>"
-                    + "<strong>ID: </strong>" + marker.id;
-        w.setContent(content);
-        marker.setAnimation(google.maps.Animation.BOUNCE);
-        setTimeout(function() {
-			       marker.setAnimation(null);
-		    }, 2000);
-        w.open(map, marker);
+
+
       }
       function w3_open() {
         document.getElementById("navigation").style.display = "block";
