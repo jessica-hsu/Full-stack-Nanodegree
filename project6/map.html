@@ -13,37 +13,71 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <title>Neighborhood Map</title>
     <style type="text/css">
-      html, body {
+      html, body, #main {
         height: 100%;
         margin: 0;
         padding: 0;
       }
+
       #map {
         height: 100%;
-        z-index: 1;
-      }
-
-      #navigation {
-        z-index: 2;
-        width: 300px;
-        color: white;
-        background-color: rgb(71, 73, 76);
-      }
-
-      #navButton {
-        z-index: 2;
-        width: auto;
       }
 
       select {
         color: black;
       }
 
+      #navigation {
+        font-size: 150%;
+        padding-left: 1%;
+        color: white;
+      }
+      .list-group-item {
+        width: 80%;
+        padding: 1%;
+        font-size: 70%;
+      }
+      /*SOURCE: W3SCHOOL BOOTSTRAP*/
+      .sidenav {
+        height: 100%; /* Full-height: remove this if you want "auto" height */
+        width: 20%; /* Set the width of the sidebar */
+        position: fixed; /* Fixed Sidebar (stay in place on scroll) */
+        z-index: 1; /* Stay on top */
+        top: 0; /* Stay at the top */
+        left: 0;
+        background-color: #111; /* Black */
+        overflow-x: hidden; /* Disable horizontal scroll */
+        padding-top: 20px;
+      }
+
+      /* The navigation menu links */
+      .sidenav a {
+          padding: 6px 8px 6px 16px;
+          text-decoration: none;
+          color: #818181;
+          display: block;
+      }
+
+      /* When you mouse over the navigation links, change their color */
+      .sidenav a:hover {
+          color: #f1f1f1;
+      }
+
+      /* Style page content */
+      #main {
+        margin: 0;
+        padding: 0;
+      }
+
+      /* On smaller screens, where height is less than 450px, change the style of the sidebar (less padding and a smaller font size) */
+      @media screen and (max-height: 450px) {
+          .sidenav {padding-top: 15px;}
+          .sidenav a {font-size: 18px;}
+      }
     </style>
   </head>
   <body>
-    <div class="w3-sidebar w3-bar-block w3-collapse w3-card w3-animate-left" id="navigation">
-      <button class="w3-bar-item w3-button w3-large w3-hide-large" onclick="close()">Close &times;</button>
+    <div class="sidenav" id="navigation">
       <div id="navigation-title"> Carrollton, Texas</div>
       <span class="glyphicon glyphicon-search"></span>
       <label for="filters">Filter</label>
@@ -52,13 +86,13 @@
       </select>
       <div class="list-group" id="full-list" data-bind="foreach: filteredLocations">
         <!-- knockout.js will take care of the filtered items -->
-        <a href="#" class="list-group-item" data-bind="text: title" onclick="open_window(this)"></a>
+        <a class="list-group-item" data-bind="text: title" onclick="open_window(this)"></a>
       </div>
       <br>
     </div>
-    <button type="button" class="w3-button w3-xlarge w3-hide-large" id="navButton" onclick="open()">&#9776;</button>
-    <div id="map"></div>
-
+    <div id="main">
+      <div id="map"></div>
+    </div>
     <script type="text/javascript">
       var map;
       /* ARRAY OF LOCATION ATTRIBUTES AS OBJECTS */
@@ -92,6 +126,7 @@
           var marker = new google.maps.Marker({
             position: the_data.landmark_info[i].position,
             title: the_data.landmark_info[i].title,
+            type: the_data.landmark_info[i].type,
             animation: google.maps.Animation.DROP,
             map: map
           });
@@ -182,7 +217,8 @@
             // concatenate all the content strings and set to infoWindow
             var content = "<strong>Location: </strong>" + marker.title + "<br>"
                           + category + phone + twitter + facebook
-                          + url + menu + user_checkin;
+                          + url + menu + user_checkin
+                          + "<strong>Powered by FourSquare API</strong>";
             w.setContent(content);
             // make it bounce for 2 seconds!
             marker.setAnimation(google.maps.Animation.BOUNCE);
@@ -200,14 +236,7 @@
           }
         });
       }
-      // open the side bar navigation
-      function open() {
-        document.getElementById("navigation").style.display = "block";
-      }
-      // close side bar nagivation
-      function close() {
-        document.getElementById("navigation").style.display = "none";
-      }
+
       // open infoWindow when you click on location in the filtered list
       function open_window(element) {
         var name = element.innerHTML;
@@ -225,11 +254,26 @@
         self.filter = ko.observable("");
         self.locations = ko.observableArray(data.landmark_info);
         self.filteredLocations = ko.computed(function() {
+          // picks up the selected option in drop down
           var filter = self.filter();
+          // show all places if nothing selected or all is chosen
           if (!filter || filter == "All") {
+            // make all markers visible
+            for (i=0; i<landmarks.length; i++) {
+              landmarks[i].setVisible(true);
+            }
             return self.locations();
           } else {
             return ko.utils.arrayFilter(self.locations(), function(j) {
+              // set those with matching filter to visible
+              for (i=0; i<landmarks.length; i++) {
+                if (landmarks[i].type == filter) {
+                  landmarks[i].setVisible(true);
+                } else {
+                  landmarks[i].setVisible(false);
+                }
+              }
+              // only show those that match filter type
               return j.type == filter;
             });
           }
