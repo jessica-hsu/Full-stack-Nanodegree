@@ -14,3 +14,6 @@
 
 ## Project 5: Build an Item Catalog Application
 >You will develop an application that provides a list of items within a variety of categories as well as provide a user registration and authentication system. Registered users will have the ability to post, edit and delete their own items. (From Udacity)
+
+## Project 6: Neighborhood Map
+>You will develop a single page application featuring a map of your neighborhood or a neighborhood you would like to visit. You will then add functionality to this map including highlighted locations, third-party data about those locations and various ways to browse the content. (From Udacity)
