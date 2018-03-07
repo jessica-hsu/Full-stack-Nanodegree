@@ -43,24 +43,20 @@
   </head>
   <body>
     <div class="w3-sidebar w3-bar-block w3-collapse w3-card w3-animate-left" id="navigation">
-      <button class="w3-bar-item w3-button w3-large w3-hide-large" onclick="w3_close()">Close &times;</button>
+      <button class="w3-bar-item w3-button w3-large w3-hide-large" onclick="close()">Close &times;</button>
       <div id="navigation-title"> Carrollton, Texas</div>
       <span class="glyphicon glyphicon-search"></span>
       <label for="filters">Filter</label>
       <select id="filters" data-bind="options: filters, value: filter">
-        <!-- <option value="cafe">Cafés</option>
-        <option value="shops">Shops</option>
-        <option value="service">Services</option>
-        <option value="restaurant">Restaurant</option> -->
+        <!-- knockout.js will fill the options in -->
       </select>
       <div class="list-group" id="full-list" data-bind="foreach: filteredLocations">
-        <a href="#" class="list-group-item" data-bind="text: title"></a>
+        <!-- knockout.js will take care of the filtered items -->
+        <a href="#" class="list-group-item" data-bind="text: title" onclick="open_window(this)"></a>
       </div>
       <br>
-
-
     </div>
-    <button type="button" class="w3-button w3-xlarge w3-hide-large" id="navButton" onclick="w3_open()">&#9776;</button>
+    <button type="button" class="w3-button w3-xlarge w3-hide-large" id="navButton" onclick="open()">&#9776;</button>
     <div id="map"></div>
 
     <script type="text/javascript">
@@ -78,8 +74,10 @@
         /* FILTERS */
         filters: ["All", "Food", "Shops", "Service"]
       };
-
-
+      /* CREATE WINDOW TO SHOW INFO WHEN CLICK ON MARKER*/
+      var infoWindow;
+      /* ARRAY TO HOLD ALL THE MARKS */
+      var landmarks = []
       /* LOAD MAP */
       function initMap() {
         /* CREATE MAP */
@@ -87,13 +85,10 @@
           center: {lat: 32.981539, lng: -96.908635},
           zoom: 15
         });
-        /* CREATE WINDOW TO SHOW INFO WHEN CLICK ON MARKER*/
-        var infoWindow = new google.maps.InfoWindow();
-        /* ARRAY TO HOLD ALL THE MARKS */
-        var landmarks = []
-
+        infoWindow = new google.maps.InfoWindow();
         /* LOAD LOCATION MARKERS AND STORE IN MARKER ARRAY */
         for (i=0; i<the_data.landmark_info.length; i++) {
+          // create new marker in google maps api
           var marker = new google.maps.Marker({
             position: the_data.landmark_info[i].position,
             title: the_data.landmark_info[i].title,
@@ -150,7 +145,6 @@
             var menu = "<strong>Menu: </strong>: N/A <br>";
             var user_checkin = "<strong>Checkin Count: </strong>: N/A <br>";
             /* GET CATEGORY*/
-            console.log(data['response']['venues'][0]['categories'] != undefined);
             if (data['response']['venues'][0]['categories'] != undefined) {
               cat = data['response']['venues'][0]['categories'][0]['name'];
               category = "<strong>Category: </strong>" + cat + "<br>";
@@ -185,14 +179,17 @@
               num = data['response']['venues'][0]['stats']['checkinsCount'];
               user_checkin = "<strong>Checkin Count: </strong>" + num + "<br>";
             }
+            // concatenate all the content strings and set to infoWindow
             var content = "<strong>Location: </strong>" + marker.title + "<br>"
                           + category + phone + twitter + facebook
                           + url + menu + user_checkin;
             w.setContent(content);
+            // make it bounce for 2 seconds!
             marker.setAnimation(google.maps.Animation.BOUNCE);
             setTimeout(function() {
     			       marker.setAnimation(null);
     		    }, 2000);
+            // open the infoWindo onclick
             w.open(map, marker);
           },
           error: function(xhr) {
@@ -202,17 +199,25 @@
             alert("FourSquare failed to load.");
           }
         });
-
-
-
       }
-      function w3_open() {
+      // open the side bar navigation
+      function open() {
         document.getElementById("navigation").style.display = "block";
       }
-      function w3_close() {
+      // close side bar nagivation
+      function close() {
         document.getElementById("navigation").style.display = "none";
       }
-
+      // open infoWindow when you click on location in the filtered list
+      function open_window(element) {
+        var name = element.innerHTML;
+        for(i=0; i<landmarks.length; i++) {
+          if (name == landmarks[i].title) {
+            show_location_info(landmarks[i], infoWindow);
+            break;
+          }
+        }
+      }
       /* KNOCKOUT VIEW MODEL */
       var MapViewModel = function(data) {
         var self = this;
