@@ -7,5 +7,5 @@
 HTML, CSS, Bootstrap, Javascript/jQuery/Knockout.js, FourSquare API, Google Maps API
 
 ### Usage
-Download map.html and open file in browser. <br>
+Download map.html and the two directories: css and js. Open map.html in browser. <br>
 See live website [here](https://jessica-hsu.github.io/portfolio/udacity/map.html).
