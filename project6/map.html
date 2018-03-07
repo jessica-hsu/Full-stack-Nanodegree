@@ -35,26 +35,29 @@
         width: auto;
       }
 
+      select {
+        color: black;
+      }
+
     </style>
   </head>
   <body>
     <div class="w3-sidebar w3-bar-block w3-collapse w3-card w3-animate-left" id="navigation">
       <button class="w3-bar-item w3-button w3-large w3-hide-large" onclick="w3_close()">Close &times;</button>
       <div id="navigation-title"> Carrollton, Texas</div>
-      <label for="search-box">Search</label>
       <span class="glyphicon glyphicon-search"></span>
-      <input id="search-box" class="form-control" type="text" placeholder="Enter location name"
-       data-bind= "value: filter, value">
-      <ul id="full-list" data-bind="foreach: locations">
-      </ul>
-      <br>
       <label for="filters">Filter</label>
-      <select id="filters">
-        <option value="cafe">Cafés</option>
+      <select id="filters" data-bind="options: filters, value: filter">
+        <!-- <option value="cafe">Cafés</option>
         <option value="shops">Shops</option>
         <option value="service">Services</option>
-        <option value="restaurant">Restaurant</option>
+        <option value="restaurant">Restaurant</option> -->
       </select>
+      <div class="list-group" id="full-list" data-bind="foreach: filteredLocations">
+        <a href="#" class="list-group-item" data-bind="text: title"></a>
+      </div>
+      <br>
+
 
     </div>
     <button type="button" class="w3-button w3-xlarge w3-hide-large" id="navButton" onclick="w3_open()">&#9776;</button>
@@ -62,56 +65,57 @@
 
     <script type="text/javascript">
       var map;
+      /* ARRAY OF LOCATION ATTRIBUTES AS OBJECTS */
+      var the_data = {
+         landmark_info: [
+           {title: "Daiso Japan", position: {lat: 32.981539, lng: -96.908635}, type: "Shops"},
+           {title: "H Mart", position: {lat: 32.985835, lng: -96.910009}, type: "Shops"},
+           {title: "Caffebene", position: {lat: 32.983966, lng: -96.911424}, type: "Food"},
+           {title: "Chick-fil-A", position: {lat: 32.986195, lng: -96.909300}, type: "Food"},
+           {title: "Java Gaming Cafe", position: {lat: 32.988245, lng: -96.910358}, type: "Service"},
+           {title: "Walmart", position: {lat: 32.985984, lng: -96.905989}, type: "Shops"}
+         ],
+        /* FILTERS */
+        filters: ["All", "Food", "Shops", "Service"]
+      };
+
+
       /* LOAD MAP */
       function initMap() {
-        try {
-          /* CREATE MAP */
-          map = new google.maps.Map(document.getElementById('map'), {
-            center: {lat: 32.981539, lng: -96.908635},
-            zoom: 15
+        /* CREATE MAP */
+        map = new google.maps.Map(document.getElementById('map'), {
+          center: {lat: 32.981539, lng: -96.908635},
+          zoom: 15
+        });
+        /* CREATE WINDOW TO SHOW INFO WHEN CLICK ON MARKER*/
+        var infoWindow = new google.maps.InfoWindow();
+        /* ARRAY TO HOLD ALL THE MARKS */
+        var landmarks = []
+
+        /* LOAD LOCATION MARKERS AND STORE IN MARKER ARRAY */
+        for (i=0; i<the_data.landmark_info.length; i++) {
+          var marker = new google.maps.Marker({
+            position: the_data.landmark_info[i].position,
+            title: the_data.landmark_info[i].title,
+            animation: google.maps.Animation.DROP,
+            map: map
           });
-          /* CREATE WINDOW TO SHOW INFO WHEN CLICK ON MARKER*/
-          var infoWindow = new google.maps.InfoWindow();
-          /* ARRAY TO HOLD ALL THE MARKS */
-          var landmarks = []
-          /* ARRAY OF LOCATION ATTRIBUTES AS OBJECTS */
-          var landmark_info = [
-            {title: "Daiso Japan", position: {lat: 32.981539, lng: -96.908635}},
-            {title: "H Mart", position: {lat: 32.985835, lng: -96.910009}},
-            {title: "Caffebene", position: {lat: 32.983966, lng: -96.911424}},
-            {title: "Chick-fil-A", position: {lat: 32.986195, lng: -96.909300}},
-            {title: "Java Gaming Cafe", position: {lat: 32.988245, lng: -96.910358}},
-            {title: "Walmart", position: {lat: 32.985984, lng: -96.905989}}
-          ]
-          /* LOAD LOCATION MARKERS AND STORE IN MARKER ARRAY */
-          for (i=0; i<landmark_info.length; i++) {
-            var marker = new google.maps.Marker({
-              position: landmark_info[i].position,
-              title: landmark_info[i].title,
-              animation: google.maps.Animation.DROP,
-              map: map
-            });
-            /*ADD LISTENER. OPENS MODAL TO SHOW MORE INFO*/
-            marker.addListener("click", function() {
-              show_location_info(this, infoWindow);
-            });
-            landmarks.push(marker);
-          }
-
-          /* ALLOW MAP TO RESIZE AUTOMATICALLY WHEN SCREEN RESIZES */
-          google.maps.event.addDomListener(window, "resize", function() {
-            var center = map.getCenter();
-            google.maps.event.trigger(map, "resize");
-            map.setCenter(center);
+          /*ADD LISTENER. OPENS MODAL TO SHOW MORE INFO*/
+          marker.addListener("click", function() {
+            show_location_info(this, infoWindow);
           });
-
-          /* ACTIVATE KNOCKOUT.JS VIEW MODEL */
-          ko.applyBindings(new MapViewModel());
-
+          landmarks.push(marker);
         }
-        catch(error) {
-          alert("Google maps failed to load.");
-        }
+
+        /* ALLOW MAP TO RESIZE AUTOMATICALLY WHEN SCREEN RESIZES */
+        google.maps.event.addDomListener(window, "resize", function() {
+          var center = map.getCenter();
+          google.maps.event.trigger(map, "resize");
+          map.setCenter(center);
+        });
+
+        /* ACTIVATE KNOCKOUT.JS VIEW MODEL */
+        ko.applyBindings(new MapViewModel(the_data));
 
       } // END OF MAP INITMAP() FUNCTION
 
@@ -210,8 +214,21 @@
       }
 
       /* KNOCKOUT VIEW MODEL */
-      var MapViewModel = function() {
-
+      var MapViewModel = function(data) {
+        var self = this;
+        self.filters = ko.observableArray(data.filters);
+        self.filter = ko.observable("");
+        self.locations = ko.observableArray(data.landmark_info);
+        self.filteredLocations = ko.computed(function() {
+          var filter = self.filter();
+          if (!filter || filter == "All") {
+            return self.locations();
+          } else {
+            return ko.utils.arrayFilter(self.locations(), function(j) {
+              return j.type == filter;
+            });
+          }
+        });
       }
 
     </script>
