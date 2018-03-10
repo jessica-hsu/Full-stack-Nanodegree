@@ -15,7 +15,7 @@ var the_data = {
 /* CREATE WINDOW TO SHOW INFO WHEN CLICK ON MARKER*/
 var infoWindow;
 /* ARRAY TO HOLD ALL THE MARKS */
-var landmarks = []
+var landmarks = [];
 /* LOAD MAP */
 function initMap() {
   /* CREATE MAP */
@@ -27,18 +27,7 @@ function initMap() {
   /* LOAD LOCATION MARKERS AND STORE IN MARKER ARRAY */
   for (i=0; i<the_data.landmark_info.length; i++) {
     // create new marker in google maps api
-    var marker = new google.maps.Marker({
-      position: the_data.landmark_info[i].position,
-      title: the_data.landmark_info[i].title,
-      type: the_data.landmark_info[i].type,
-      animation: google.maps.Animation.DROP,
-      map: map
-    });
-    /*ADD LISTENER. OPENS MODAL TO SHOW MORE INFO*/
-    marker.addListener("click", function() {
-      show_location_info(this, infoWindow);
-    });
-    landmarks.push(marker);
+    add_to_map(the_data.landmark_info[i]);
   }
 
   /* ALLOW MAP TO RESIZE AUTOMATICALLY WHEN SCREEN RESIZES */
@@ -53,6 +42,22 @@ function initMap() {
 
 } // END OF MAP INITMAP() FUNCTION
 
+// add a LISTENER
+function add_to_map(m) {
+  var marker = new google.maps.Marker({
+    position: m.position,
+    title: m.title,
+    type: m.type,
+    animation: google.maps.Animation.DROP,
+    map: map
+  });
+
+  /*ADD LISTENER. OPENS MODAL TO SHOW MORE INFO*/
+  marker.addListener("click", function() {
+    show_location_info(this, infoWindow);
+  });
+  landmarks.push(marker);
+}
 /* AJAX TO 3rd PARTY API TO GET MORE INFO. LOAD LOCATION INFO TO MODAL */
 function show_location_info(marker, w) {
   w.marker = marker;
@@ -84,38 +89,38 @@ function show_location_info(marker, w) {
       var menu = "<strong>Menu: </strong>: N/A <br>";
       var user_checkin = "<strong>Checkin Count: </strong>: N/A <br>";
       /* GET CATEGORY*/
-      if (data['response']['venues'][0]['categories'] != undefined) {
-        cat = data['response']['venues'][0]['categories'][0]['name'];
+      if (data.response.venues[0].categories !== undefined) {
+        cat = data.response.venues[0].categories[0].name;
         category = "<strong>Category: </strong>" + cat + "<br>";
       }
       /* GET CONTACT INFO */
-      if (data['response']['venues'][0]['contact'] != undefined) {
-         if (data['response']['venues'][0]['contact']['formattedPhone'] != undefined) {
-           var phone_num = data['response']['venues'][0]['contact']['formattedPhone'];
+      if (data.response.venues[0].contact !== undefined) {
+         if (data.response.venues[0].contact.formattedPhone !== undefined) {
+           var phone_num = data.response.venues[0].contact.formattedPhone;
            phone = "<strong>Phone: </strong>" + phone_num + "<br>";
          }
-         if (data['response']['venues'][0]['contact']['twitter'] != undefined) {
-           var twitter_id = data['response']['venues'][0]['contact']['twitter'];
-           phone = "<strong>Twitter Handle: </strong>@" + twitter_id + "<br>"
+         if (data.response.venues[0].contact.twitter !== undefined) {
+           var twitter_id = data.response.venues[0].contact.twitter;
+           phone = "<strong>Twitter Handle: </strong>@" + twitter_id + "<br>";
          }
-         if (data['response']['venues'][0]['contact']['facebookUsername'] != undefined) {
-           var fb_name = data['response']['venues'][0]['contact']['facebookUsername'];
-           facebook = "<strong>Facebook ID: </strong>" + fb_name + "<br>"
+         if (data.response.venues[0].contact.facebookUsername !== undefined) {
+           var fb_name = data.response.venues[0].contact.facebookUsername;
+           facebook = "<strong>Facebook ID: </strong>" + fb_name + "<br>";
          }
       }
       /* GET WEBSITE LINK */
-      if (data['response']['venues'][0]['url'] != undefined) {
-        the_url = data['response']['venues'][0]['url'];
+      if (data.response.venues[0].url !== undefined) {
+        the_url = data.response.venues[0].url;
         url = "<strong>Website: </strong><a href='" + the_url + "'>Website</a><br>";
       }
       /* GET MENU LINK */
-      if (data['response']['venues'][0]['menu'] != undefined) {
-        m = data['response']['venues'][0]['menu']['url']
+      if (data.response.venues[0].menu !== undefined) {
+        m = data.response.venues[0].menu.url;
         menu = "<strong>Menu: </strong><a href='" + m + "'>Menu</a><br>";
       }
       /* GET USER CHECKIN NUMBER*/
-      if (data['response']['venues'][0]['stats']['checkinsCount'] != undefined) {
-        num = data['response']['venues'][0]['stats']['checkinsCount'];
+      if (data.response.venues[0].stats.checkinsCount !== undefined) {
+        num = data.response.venues[0].stats.checkinsCount;
         user_checkin = "<strong>Checkin Count: </strong>" + num + "<br>";
       }
       // concatenate all the content strings and set to infoWindow
@@ -182,4 +187,4 @@ var MapViewModel = function(data) {
       });
     }
   });
-}
+};
