@@ -124,10 +124,9 @@ function show_location_info(marker, w) {
         user_checkin = "<strong>Checkin Count: </strong>" + num + "<br>";
       }
       // concatenate all the content strings and set to infoWindow
-      var content = "<strong>Location: </strong>" + marker.title + "<br>"
-                    + category + phone + twitter + facebook
-                    + url + menu + user_checkin
-                    + "<strong>Powered by FourSquare API</strong>";
+      var content = "<strong>Location: </strong>" + marker.title + "<br>";
+      content += category + phone + twitter + facebook + url + menu + user_checkin;
+      content += "<strong>Powered by FourSquare API</strong>";
       w.setContent(content);
       // make it bounce for 2 seconds!
       marker.setAnimation(google.maps.Animation.BOUNCE);
