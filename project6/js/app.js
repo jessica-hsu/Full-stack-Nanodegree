@@ -77,72 +77,71 @@ function show_location_info(marker, w) {
   $.ajax({
     url: FOURSQUARE_URL,
     data: DATA_PARAMS,
-    dataType: "json",
-    success: function(data) {
-      /* ADD IN EXTRA INFO FROM FOURSQUARE. IF-ELSE THERE IN CASE
-      SOME ATTRIBUTES ARE NOT RETURNED FROM JSON OBJECT */
-      var category = "<strong>Category: </strong>: N/A <br>";
-      var phone = "<strong>Phone: </strong>: N/A <br>";
-      var twitter = "<strong>Twitter Handle: </strong>: N/A <br>";
-      var facebook = "<strong>Facebook ID: </strong>: N/A <br>";
-      var url = "<strong>Website: </strong>: N/A <br>";
-      var menu = "<strong>Menu: </strong>: N/A <br>";
-      var user_checkin = "<strong>Checkin Count: </strong>: N/A <br>";
-      /* GET CATEGORY*/
-      if (data.response.venues[0].categories !== undefined) {
-        cat = data.response.venues[0].categories[0].name;
-        category = "<strong>Category: </strong>" + cat + "<br>";
-      }
-      /* GET CONTACT INFO */
-      if (data.response.venues[0].contact !== undefined) {
-         if (data.response.venues[0].contact.formattedPhone !== undefined) {
-           var phone_num = data.response.venues[0].contact.formattedPhone;
-           phone = "<strong>Phone: </strong>" + phone_num + "<br>";
-         }
-         if (data.response.venues[0].contact.twitter !== undefined) {
-           var twitter_id = data.response.venues[0].contact.twitter;
-           phone = "<strong>Twitter Handle: </strong>@" + twitter_id + "<br>";
-         }
-         if (data.response.venues[0].contact.facebookUsername !== undefined) {
-           var fb_name = data.response.venues[0].contact.facebookUsername;
-           facebook = "<strong>Facebook ID: </strong>" + fb_name + "<br>";
-         }
-      }
-      /* GET WEBSITE LINK */
-      if (data.response.venues[0].url !== undefined) {
-        the_url = data.response.venues[0].url;
-        url = "<strong>Website: </strong><a href='" + the_url + "'>Website</a><br>";
-      }
-      /* GET MENU LINK */
-      if (data.response.venues[0].menu !== undefined) {
-        m = data.response.venues[0].menu.url;
-        menu = "<strong>Menu: </strong><a href='" + m + "'>Menu</a><br>";
-      }
-      /* GET USER CHECKIN NUMBER*/
-      if (data.response.venues[0].stats.checkinsCount !== undefined) {
-        num = data.response.venues[0].stats.checkinsCount;
-        user_checkin = "<strong>Checkin Count: </strong>" + num + "<br>";
-      }
-      // concatenate all the content strings and set to infoWindow
-      var content = "<strong>Location: </strong>" + marker.title + "<br>";
-      content += category + phone + twitter + facebook + url + menu + user_checkin;
-      content += "<strong>Powered by FourSquare API</strong>";
-      w.setContent(content);
-      // make it bounce for 2 seconds!
-      marker.setAnimation(google.maps.Animation.BOUNCE);
-      setTimeout(function() {
-           marker.setAnimation(null);
-      }, 2000);
-      // open the infoWindo onclick
-      w.open(map, marker);
-    },
-    error: function(xhr) {
-      alert("Error in loading data from FourSquare");
-    },
-    fail: function() {
-      alert("FourSquare failed to load.");
+    dataType: "json"
+  })
+  // render info
+  .done(function( data ) {
+    /* ADD IN EXTRA INFO FROM FOURSQUARE. IF-ELSE THERE IN CASE
+    SOME ATTRIBUTES ARE NOT RETURNED FROM JSON OBJECT */
+    var category = "<strong>Category: </strong>: N/A <br>";
+    var phone = "<strong>Phone: </strong>: N/A <br>";
+    var twitter = "<strong>Twitter Handle: </strong>: N/A <br>";
+    var facebook = "<strong>Facebook ID: </strong>: N/A <br>";
+    var url = "<strong>Website: </strong>: N/A <br>";
+    var menu = "<strong>Menu: </strong>: N/A <br>";
+    var user_checkin = "<strong>Checkin Count: </strong>: N/A <br>";
+    /* GET CATEGORY*/
+    if (data.response.venues[0].categories !== undefined) {
+      cat = data.response.venues[0].categories[0].name;
+      category = "<strong>Category: </strong>" + cat + "<br>";
     }
-  });
+    /* GET CONTACT INFO */
+    if (data.response.venues[0].contact !== undefined) {
+       if (data.response.venues[0].contact.formattedPhone !== undefined) {
+         var phone_num = data.response.venues[0].contact.formattedPhone;
+         phone = "<strong>Phone: </strong>" + phone_num + "<br>";
+       }
+       if (data.response.venues[0].contact.twitter !== undefined) {
+         var twitter_id = data.response.venues[0].contact.twitter;
+         phone = "<strong>Twitter Handle: </strong>@" + twitter_id + "<br>";
+       }
+       if (data.response.venues[0].contact.facebookUsername !== undefined) {
+         var fb_name = data.response.venues[0].contact.facebookUsername;
+         facebook = "<strong>Facebook ID: </strong>" + fb_name + "<br>";
+       }
+    }
+    /* GET WEBSITE LINK */
+    if (data.response.venues[0].url !== undefined) {
+      the_url = data.response.venues[0].url;
+      url = "<strong>Website: </strong><a href='" + the_url + "'>Website</a><br>";
+    }
+    /* GET MENU LINK */
+    if (data.response.venues[0].menu !== undefined) {
+      m = data.response.venues[0].menu.url;
+      menu = "<strong>Menu: </strong><a href='" + m + "'>Menu</a><br>";
+    }
+    /* GET USER CHECKIN NUMBER*/
+    if (data.response.venues[0].stats.checkinsCount !== undefined) {
+      num = data.response.venues[0].stats.checkinsCount;
+      user_checkin = "<strong>Checkin Count: </strong>" + num + "<br>";
+    }
+    // concatenate all the content strings and set to infoWindow
+    var content = "<strong>Location: </strong>" + marker.title + "<br>";
+    content += category + phone + twitter + facebook + url + menu + user_checkin;
+    content += "<strong>Powered by FourSquare API</strong>";
+    w.setContent(content);
+    // make it bounce for 2 seconds!
+    marker.setAnimation(google.maps.Animation.BOUNCE);
+    setTimeout(function() {
+         marker.setAnimation(null);
+    }, 2000);
+    // open the infoWindo onclick
+    w.open(map, marker);
+  })
+  // if ajax failed
+  .fail(function( xhr, status, errorThrown ) {
+    alert("FourSquare failed to load.");
+  })
 }
 
 // open infoWindow when you click on location in the filtered list
