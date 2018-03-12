@@ -25,7 +25,7 @@
       </select>
       <div class="list-group" id="full-list" data-bind="foreach: filteredLocations">
         <!-- knockout.js will take care of the filtered items -->
-        <a class="list-group-item" data-bind="text: title" onclick="open_window(this)"></a>
+        <a class="list-group-item" data-bind="text: title, click: show_info"></a>
       </div>
       <br>
     </div>

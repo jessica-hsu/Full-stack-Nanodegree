@@ -146,8 +146,8 @@ function show_location_info(marker, w) {
 }
 
 // open infoWindow when you click on location in the filtered list
-function open_window(element) {
-  var name = element.innerHTML;
+this.show_info = function(data, event) {
+  var name = data.title;
   for(i=0; i<landmarks.length; i++) {
     if (name == landmarks[i].title) {
       show_location_info(landmarks[i], infoWindow);
@@ -186,4 +186,5 @@ var MapViewModel = function(data) {
       });
     }
   });
+
 };
