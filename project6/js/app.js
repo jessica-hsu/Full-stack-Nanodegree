@@ -141,7 +141,7 @@ function show_location_info(marker, w) {
   // if ajax failed
   .fail(function( xhr, status, errorThrown ) {
     alert("FourSquare failed to load.");
-  })
+  });
 }
 
 // open infoWindow when you click on location in the filtered list
@@ -153,6 +153,11 @@ this.show_info = function(data, event) {
       break;
     }
   }
+};
+
+// google maps error
+function mapError() {
+  alert("Google Maps failed to load");
 }
 /* KNOCKOUT VIEW MODEL */
 var MapViewModel = function(data) {
