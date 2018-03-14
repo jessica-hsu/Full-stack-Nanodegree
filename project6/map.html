@@ -17,17 +17,21 @@
   </head>
   <body>
     <div class="sidenav" id="navigation">
+      <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
       <div id="navigation-title"> Carrollton, Texas</div>
       <span class="glyphicon glyphicon-search"></span>
       <label for="filters">Filter</label>
       <select id="filters" data-bind="options: filters, value: filter">
         <!-- knockout.js will fill the options in -->
       </select>
-      <div class="list-group" id="full-list" data-bind="foreach: filteredLocations">
+      <div id="full-list" data-bind="foreach: filteredLocations">
         <!-- knockout.js will take care of the filtered items -->
-        <a class="list-group-item" data-bind="text: title, click: show_info"></a>
+        <a data-bind="text: title, click: show_info"></a>
       </div>
       <br>
+    </div>
+    <div>
+      <a class="btn" onclick="openNav()" id="hamburger">&#9776; open</a>
     </div>
     <div id="main">
       <div id="map"></div>

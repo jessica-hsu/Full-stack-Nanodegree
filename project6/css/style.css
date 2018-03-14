@@ -13,49 +13,55 @@ select {
 }
 
 #navigation {
-  font-size: 150%;
+  font-size: 120%;
   padding-left: 1%;
   color: white;
 }
-.list-group-item {
-  width: 80%;
-  padding: 1%;
-  font-size: 70%;
-}
+
 /*SOURCE: W3SCHOOL BOOTSTRAP*/
 .sidenav {
-  height: 100%; /* Full-height: remove this if you want "auto" height */
-  width: 20%; /* Set the width of the sidebar */
-  position: fixed; /* Fixed Sidebar (stay in place on scroll) */
-  z-index: 1; /* Stay on top */
-  top: 0; /* Stay at the top */
-  left: 0;
-  background-color: #111; /* Black */
-  overflow-x: hidden; /* Disable horizontal scroll */
-  padding-top: 20px;
+    height: 100%;
+    width: 0;
+    position: fixed;
+    z-index: 3;
+    top: 0;
+    left: 0;
+    background-color: #111;
+    overflow-x: hidden;
+    transition: 0.5s;
+    padding-top: 60px;
 }
 
-/* The navigation menu links */
 .sidenav a {
-    padding: 6px 8px 6px 16px;
+    padding: 8px 8px 8px 32px;
     text-decoration: none;
+    font-size: 120%;
     color: #818181;
     display: block;
+    transition: 0.3s;
 }
 
-/* When you mouse over the navigation links, change their color */
 .sidenav a:hover {
     color: #f1f1f1;
 }
 
-/* Style page content */
-#main {
-  margin: 0;
-  padding: 0;
+.sidenav .closebtn {
+    position: absolute;
+    top: 0;
+    right: 25px;
+    font-size: 30px;
+    margin-left: 50px;
 }
 
-/* On smaller screens, where height is less than 450px, change the style of the sidebar (less padding and a smaller font size) */
+#hamburger {
+  margin-left: 2%;
+  padding: 0;
+  font-size:20px;
+  cursor:pointer;
+  z-index: 1000;
+
+}
 @media screen and (max-height: 450px) {
-    .sidenav {padding-top: 15px;}
-    .sidenav a {font-size: 18px;}
+  .sidenav {padding-top: 15px;}
+  .sidenav a {font-size: 18px;}
 }

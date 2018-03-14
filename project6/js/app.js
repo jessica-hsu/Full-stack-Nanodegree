@@ -155,6 +155,13 @@ this.show_info = function(data, event) {
   }
 };
 
+function openNav() {
+    document.getElementById("navigation").style.width = "250px";
+}
+
+function closeNav() {
+    document.getElementById("navigation").style.width = "0";
+}
 // google maps error
 function mapError() {
   alert("Google Maps failed to load");
