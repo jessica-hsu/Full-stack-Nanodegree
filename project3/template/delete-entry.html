@@ -8,11 +8,11 @@
   <div class="form-group">
     <label for="delete-entry">Check Blog Entries to Delete:</label><br>
     {% for p in posts %}
-      <input type="checkbox" id="{{ p.id }}">&nbsp; {{ p.entry_title }}<br>
+      <input type="checkbox" id="{{ p.id }}" name="{{ p.id }}">&nbsp; {{ p.entry_title }}<br>
       <br>
     {% endfor %}
   </div>
-  <button type="submit" class="btn" id="delete-submit">Delete</button>
+  <button type="submit" class="btn" id="delete-submit" name="delete-submit">Delete</button>
 </form>
 
 {% endblock %}
