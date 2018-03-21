@@ -1,5 +1,5 @@
-application: udacity-cs253
-version: 1
+#application: udacity-blog-198705
+#version: 1
 runtime: python27
 api_version: 1
 threadsafe: true
@@ -13,7 +13,4 @@ handlers:
 
 libraries:
 - name: jinja2
-  version: 2.6
-
-- name: PIL
-  version: "1.1.7"
+  version: latest
