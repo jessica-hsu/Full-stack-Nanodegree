@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2 class="section-title">Edit Comment</h2>
+<br>
+<strong>{{msg}}</strong>
+<form name="post-form" id="post-form" method="post">
+  <div class="form-group">
+    <label for="comment-text">Comment:</label>
+    <textarea rows="5" class="form-control" id="comment-text" name="comment-text" required>{{c.content}}</textarea>
+  </div>
+  <button type="submit" class="btn" id="post-submit">Submit</button>
+  <a href="/blog/{{c.blog_id}}"><button type="button" class="btn btn-info">Cancel</button></a>
+</form>
+
+{% endblock %}

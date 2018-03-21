@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="entry">
+      <div id="post-id" name="post-id" style="display:none">{{p.key().id()}}</div>
+      <div class="entry-title">
+        {{p.title}}
+      </div>
+      <div class="entry-date">{{p.created.strftime("%b %d, %Y")}}</div>
+      <div class="entry-content">
+        {{p._render_text | safe}}
+      </div>
+      <br>
+      <a href="/edit/{{p.key().id()}}"><button type="button" class="btn btn-info">Edit</button></a>
+      <a href="/delete/{{p.key().id()}}"><button type="button" class="btn btn-danger">Delete</button></a>
+    </div>
+    <br>
+    {% if uid %}
+      <form name="comment-form" id="comment-form" method="post">
+        <input type="text" class="form-control" id="blog-id" name="blog-id" value="{{p.key().id()}}" style="display:none;">
+        <input type="text" class="form-control" id="user-id" name="user-id" value="{{uid}}" style="display:none;">
+        <div class="form-group">
+          <label for="comment-text">Add comment:</label>
+          <textarea rows="5" class="form-control" id="comment-text" name="comment-text" placeholder="add comment here" required></textarea>
+        </div>
+        <button type="submit" class="btn" id="comment-submit">Submit</button>
+      </form>
+    {% endif %}
+    <br>
+    <h4>Comments</h4>
+    {% set i=1 %}
+    {% for c in comments %}
+      <div class="comments">
+        <div id="comment-id" name="comment-id" style="display:none">{{c.key().id()}}</div>
+        <strong>Comment #{{i}}:</strong>
+        <a href="/comment/{{c.key().id()}}">Edit</a>
+        <a href="/delete-comment/{{c.key().id()}}">Delete</a>
+        <div class="comment-content">
+          {{c.content}}
+        </div>
+      </div>
+      {% set i = i+ 1%}
+    {% endfor %}
+
+{% endblock %}

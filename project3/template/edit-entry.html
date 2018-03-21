@@ -1,41 +1,21 @@
 {% extends "base.html" %}
 
 {% block content %}
+
 <h2 class="section-title">Edit Entry</h2>
 <br>
-<label>Click 'edit' button to modify entry:</label><br>
-{% for p in posts %}
-<button type="button" id="{{ p.id }}" name="{{ p.id }}" class="btn btn-primary" data-toggle="modal" data-target="#make-edits">Edit</button>
-&nbsp;{{p.entry_title}}<br><br>
-{% endfor %}
-
-</div>
-<!-- html code for modal. make mods to entries here -->
-<div id="make-edits" class="modal fade" role="dialog">
-<div class="modal-dialog modal-lg">
-  <div class="modal-content">
-    <div class="modal-header">
-      <button type="button" class="close" data-dismiss="modal">&times;</button>
-      <h4 class="modal-title">Edit Entry</h4>
-    </div>
-    <div class="modal-body">
-      <form name="edit-form" id="edit-form" method="post">
-        <div class="form-group">
-          <label for="edit-title">Entry Title:</label>
-          <input type="text" class="form-control" id="edit-title" name="edit-title" value="{{p.entry_title}}" required>
-        </div>
-        <div class="form-group">
-          <label for="edit-blog-text">Content:</label>
-          <textarea rows="15" class="form-control" id="edit-blog-text" name="edit-blog-text" required>{{p._render_text | safe}}</textarea>
-        </div>
-        <button type="submit" class="btn" id="edit-submit" name="edit-submit">Update</button>
-      </form>
-    </div>
-    <div class="modal-footer">
-      <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-    </div>
+<form name="post-form" id="post-form" method="post">
+  <input type="text" class="form-control" id="user-id" name="user-id" value="{{uid}}" style="display:none;">
+  <div class="form-group">
+    <label for="title">Entry Title:</label>
+    <input type="text" class="form-control" id="title" name="title" value="{{p.title}}" required>
   </div>
-</div>
-</div>
+  <div class="form-group">
+    <label for="blog-text">Content:</label>
+    <textarea rows="15" class="form-control" id="blog-text" name="blog-text" required>{{p.content}}</textarea>
+  </div>
+  <button type="submit" class="btn" id="post-submit">Submit</button>
+  <a href="/blog/{{p.key().id()}}"><button type="button" class="btn btn-info">Cancel</button></a>
+</form>
 
 {% endblock %}

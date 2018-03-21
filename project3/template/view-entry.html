@@ -1,7 +1,11 @@
-<div class="entry">
-  <div class="entry-title">{{p.entry_title}}</div>
-  <div class="entry-date">{{p.create_date.strftime("%b %d, %Y")}}</div>
-  <div class="entry-content">
-    {{p._render_text | safe}}
-  </div>
-</div>
+{% block content %}
+    <div class="entry">
+      <div class="entry-title">
+        <a href="/blog/{{p.key().id()}}">{{p.title}}</a>
+      </div>
+      <div class="entry-date">{{p.created.strftime("%b %d, %Y")}}</div>
+      <div class="entry-content">
+        {{p._render_text | safe}}
+      </div>
+    </div>
+{% endblock %}
