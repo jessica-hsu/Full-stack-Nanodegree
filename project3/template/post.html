@@ -3,7 +3,8 @@
     <div class="entry">
       <div id="post-id" name="post-id" style="display:none">{{p.key().id()}}</div>
       <div class="entry-title">
-        {{p.title}}
+        {{p.title}} &nbsp;
+        <a href="{{url_like}}"><button type="button" class="btn btn-primary btn-xs">{{like_text}}</button></a>
       </div>
       <div class="entry-date">{{p.created.strftime("%b %d, %Y")}}</div>
       <div class="entry-content">

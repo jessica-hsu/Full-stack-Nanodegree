@@ -22,7 +22,7 @@
         <a href="/welcome"><div class="nav-links">Welcome</div></a>
         <a href="/"><div class="nav-links">Home</div></a>
         <a href="/newentry"><div class="nav-links">New Post</div></a>
-        {% if logged_in %}
+        {% if uid %}
           <a href="/logout"><div class="nav-links">Logout</div></a>
         {% else %}
           <a href="/login"><div class="nav-links">Login</div></a>
