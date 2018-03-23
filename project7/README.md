@@ -4,17 +4,17 @@
 >You will take a baseline installation of a Linux server and prepare it to host your web applications. You will secure your server from a number of attack vectors, install and configure a database server, and deploy one of your existing web applications onto it.
 
 ### IP Address, SSH Port, Grader Login, Application URL
-<b>Public IP Address: </b> 18.217.94.162 <br>
-<b>SSH Port: </b> 2200 <br>
-<b>SSH login as Grader</b>: ssh -v -i ~/.ssh/udacity_key.pem grader@18.217.94.162 -p 2200 <br>
-<b>Application URL: </b> [http://ec2-18-217-94-162.us-east-2.compute.amazonaws.com](http://ec2-18-217-94-162.us-east-2.compute.amazonaws.com)
+**Public IP Address:** 18.217.94.162 <br>
+**SSH Port:** 2200 <br>
+**SSH login as Grader**: ssh -v -i ~/.ssh/udacity_key.pem grader@18.217.94.162 -p 2200 <br>
+**Application URL:** [http://ec2-18-217-94-162.us-east-2.compute.amazonaws.com](http://ec2-18-217-94-162.us-east-2.compute.amazonaws.com)
 <br>
 
 ### Software Installed & Configuration Changes
-<b>Software Installed: </b> <br>
+**Software Installed:** <br>
 Finger, Daemon NTPD, Apache2, Unattended Upgrades, Mod_wsgi (Apache HTTP server mod), Git, Pip, Flask, Virtualenv, Flask_oauth, httplib2, sqlalchemy, psycopg2, sqlalchemy_utils, Postgres, libpq-dev, Python
 <br>
-<b>Configuration Changes: </b> <br>
+**Configuration Changes:** <br>
 1) Added grader, gave grader sudo permissions, and changed root owner to Grader <br>
 2) Timezone configured to UTC <br>
 3) Keys configured for grader <br>
@@ -25,4 +25,4 @@ Finger, Daemon NTPD, Apache2, Unattended Upgrades, Mod_wsgi (Apache HTTP server 
 8) Configured virtual host and PostgreSQL for catalog app
 
 ### Third Party Resources
-<b>Major special thanks to these people for their <i>extremely</i> helpful README: </b> </br>
+**Major special thanks to these people for their <i>extremely</i> helpful README:** </br>
