@@ -18,3 +18,6 @@
 
 ## Project 6: Neighborhood Map
 >You will develop a single page application featuring a map of your neighborhood or a neighborhood you would like to visit. You will then add functionality to this map including highlighted locations, third-party data about those locations and various ways to browse the content. (From Udacity)
+
+## Project 7: Linux Server configuration
+>You will take a baseline installation of a Linux server and prepare it to host your web applications. You will secure your server from a number of attack vectors, install and configure a database server, and deploy one of your existing web applications onto it. (From Udacity)
