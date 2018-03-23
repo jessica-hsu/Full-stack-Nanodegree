@@ -13,7 +13,7 @@
 ### Software Installed & Configuration Changes
 **Software Installed:** <br>
 Finger, Daemon NTPD, Apache2, Unattended Upgrades, Mod_wsgi (Apache HTTP server mod), Git, Pip, Flask, Virtualenv, Flask_oauth, httplib2, sqlalchemy, psycopg2, sqlalchemy_utils, Postgres, libpq-dev, Python
-<br>
+<br><br>
 **Configuration Changes:** <br>
 1) Added grader, gave grader sudo permissions, and changed root owner to Grader <br>
 2) Timezone configured to UTC <br>
@@ -26,3 +26,8 @@ Finger, Daemon NTPD, Apache2, Unattended Upgrades, Mod_wsgi (Apache HTTP server 
 
 ### Third Party Resources
 **Major special thanks to these people for their <i>extremely</i> helpful README:** </br>
+[SteveWooding](https://github.com/SteveWooding/fullstack-nanodegree-linux-server-config),
+[iliketomatoes](https://github.com/iliketomatoes/linux_server_configuration),
+[stueken](https://github.com/stueken/FSND-P5_Linux-Server-Configuration),
+[rrjoson](https://github.com/rrjoson/udacity-linux-server-configuration),
+[anumsh](https://github.com/anumsh/Linux-Server-Configuration)
