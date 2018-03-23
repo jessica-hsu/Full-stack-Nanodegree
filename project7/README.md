@@ -1,115 +1,28 @@
+# Full-stack-Nanodegree
+## Project 7: Linux Server Configuration
+**Project Description** (from Udacity):
+>You will take a baseline installation of a Linux server and prepare it to host your web applications. You will secure your server from a number of attack vectors, install and configure a database server, and deploy one of your existing web applications onto it.
 
-sudo adduser grader
-sudo nano /etc/sudoers.d/grader
-  grader ALL=(ALL:ALL) ALL
-sudo nano /etc/hosts
-  127.0.1.1 ip-172-26-9-16
+### IP Address, SSH Port, Grader Login, Application URL
+<b>Public IP Address: </b> 18.217.94.162 <br>
+<b>SSH Port: </b> 2200 <br>
+<b>SSH login as Grader</b>: ssh -v -i ~/.ssh/udacity_key.pem grader@18.217.94.162 -p 2200 <br>
+<b>Application URL: </b> [http://ec2-18-217-94-162.us-east-2.compute.amazonaws.com](http://ec2-18-217-94-162.us-east-2.compute.amazonaws.com)
+<br>
 
-ssh -i ~/.ssh/udacity_key.pem ubuntu@18.217.94.162
-sudo apt-get update
-sudo apt-get upgrade
-sudo apt-get install finger
-sudo dpkg-reconfigure tzdata
-sudo apt-get install ntp
+### Software Installed & Configuration Changes
+<b>Software Installed: </b> <br>
+Finger, Daemon NTPD, Apache2, Unattended Upgrades, Mod_wsgi (Apache HTTP server mod), Git, Pip, Flask, Virtualenv, Flask_oauth, httplib2, sqlalchemy, psycopg2, sqlalchemy_utils, Postgres, libpq-dev, Python
+<br>
+<b>Configuration Changes: </b> <br>
+1) Added grader, gave grader sudo permissions, and changed root owner to Grader <br>
+2) Timezone configured to UTC <br>
+3) Keys configured for grader <br>
+4) Enforced key-based authentication <br>
+5) Changed port from 22 to 2200 <br>
+6) Added firewall permissions for SSH port 2200, HTTP port 80, NTP port 123 <br>
+7) Disabled ssh login for root/ubuntu user <br>
+8) Configured virtual host and PostgreSQL for catalog app
 
-back to virtual
-sudo mkdir /home/grader/.ssh
-sudo touch /home/grader/.ssh/authorized_keys
-sudo cp /root/.ssh/authorized_keys /home/grader/.ssh/authorized_keys
-sudo nano /home/grader/.ssh/authorized_keys
-  delete everything before 'ssh -rsa'
-sudo chmod 700 /home/grader/.ssh
-sudo chmod 644 /home/grader/.ssh/authorized_keys
-sudo chown -R grader:grader /home/grader/.ssh
-
-ssh -v -i ~/.ssh/udacity_key.pem grader@18.217.94.162
-sudo password for grader: pass!
-sudo nano /etc/ssh/sshd_config
-  SET PasswordAuthentication as No
-  restart
-change firewall so you don't lock yourself out!
-$ sudo ufw allow 2200/tcp.
-$ sudo ufw allow 80/tcp.
-$ sudo ufw allow 123/udp.
-$ sudo ufw enable.
-sudo nano /etc/ssh/sshd_config. Find the Port line and edit it to 2200
-sudo service ssh restart
-
-go to networking tab and add to firewall:
-Custom TCP 2200
-
-sudo nano /etc/ssh/sshd_config. Find the PermitRootLogin line and edit it to no.
-sudo apt-get install apache2
-udo apt-get install libapache2-mod-wsgi python-dev
-sudo a2enmod wsgi
-udo service apache2 start
-
-sudo apt-get install git
-git config --global user.name jessica-hsu
-git config --global user.email hsujessica21@gmail.com
-sudo cd /var/www
-sudo mkdir catalog
-sudo git clone https://github.com/jessica-hsu/Udacity-catalog-proj.git catalog
-sudo nano catalog.wsgi
-
-  import sys
-  import logging
-  logging.basicConfig(stream=sys.stderr)
-  sys.path.insert(0, "/var/www/catalog/")
-
-  from catalog import app as application
-  application.secret_key = 'mysecret'
-sudo mv application.py __init__.py
-sudo apt-get install python-pip
-sudo pip install virtualenv
-sudo virtualenv venv
-source venv/bin/activate
- sudo chmod -R 777 venv
- sudo pip install Flask -t /var/www/catalog/catalog/venv/lib/python2.7/site-packages
- sudo pip install flask_oauth -t /var/www/catalog/catalog/venv/lib/python2.7/site-packages
- sudo pip install httplib2 oauth2client sqlalchemy psycopg2 sqlalchemy_utils, flask_oauth
-sudo nano /etc/apache2/sites-available/catalog.conf
-
- <VirtualHost *:80>
-    ServerName 18.217.94.162
-    ServerAlias ec2-18-217-94-162.us-east-2.compute.amazonaws.com
-    ServerAdmin admin@318.217.94.162
-    WSGIDaemonProcess catalog python-path=/var/www/catalog:/var/www/catalog/venv/lib/python2.7/site-packages
-    WSGIProcessGroup catalog
-    WSGIScriptAlias / /var/www/catalog/catalog.wsgi
-    <Directory /var/www/catalog/Udacity-catalog-proj/>
-        Order allow,deny
-        Allow from all
-    </Directory>
-    Alias /static /var/www/catalog/Udacity-catalog-proj/static
-    <Directory /var/www/catalog/Udacity-catalog-proj/static/>
-        Order allow,deny
-        Allow from all
-    </Directory>
-    ErrorLog ${APACHE_LOG_DIR}/error.log
-    LogLevel warn
-    CustomLog ${APACHE_LOG_DIR}/access.log combined
-</VirtualHost>
-
-sudo service apache2 reload
-sudo a2ensite catalog
-
-sudo apt-get install libpq-dev python-dev
-sudo apt-get install postgresql postgresql-contrib
-sudo su - postgres
-psql
-CREATE USER catalog WITH PASSWORD 'password';
-ALTER USER catalog CREATEDB;
-CREATE DATABASE catalog WITH OWNER catalog;
-\c catalog
-REVOKE ALL ON SCHEMA public FROM public;
-GRANT ALL ON SCHEMA public TO catalog;
-\q
-exit
-sudo nano __init__.py
-sudo nano database_setup.py
-sudo nano database_populate.py
-
-  change engine = create_engine... TO engine = create_engine('postgresql://catalog:password@localhost/catalog')
-python /var/www/catalog/Udacity-catalog-proj/database_setup.py
-python /var/www/catalog/Udacity-catalog-proj/database_populate.py
+### Third Party Resources
+<b>Major special thanks to these people for their <i>extremely</i> helpful README: </b> </br>
