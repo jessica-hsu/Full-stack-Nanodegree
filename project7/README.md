@@ -1,7 +1,10 @@
 # Full-stack-Nanodegree
 
-**UPDATE** <br>
-I deleted the linux instance from AWS Lightsail a few days after completing the nanodegree. The application URL and IP address will no longer work. 
+**UPDATE #1** <br>
+I deleted the linux instance from AWS Lightsail a few days after completing the nanodegree. The application URL and IP address will no longer work. <br>
+
+**UPDATE #2** <br>
+README has been updated with a walkthrough of how I completed the project. Special thanks to the README authors listed below. <br>
 
 ## Project 7: Linux Server Configuration
 **Project Description** (from Udacity):
@@ -35,3 +38,7 @@ Finger, Daemon NTPD, Apache2, Unattended Upgrades, Mod_wsgi (Apache HTTP server 
 [stueken](https://github.com/stueken/FSND-P5_Linux-Server-Configuration),
 [rrjoson](https://github.com/rrjoson/udacity-linux-server-configuration),
 [anumsh](https://github.com/anumsh/Linux-Server-Configuration)
+
+### Tutorial (based on a combination of the five tutorials above)
+#### Setting up the Linux Instance ... 
+to be continued
