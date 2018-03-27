@@ -1,4 +1,8 @@
 # Full-stack-Nanodegree
+
+**UPDATE** <br>
+I deleted the linux instance from AWS Lightsail a few days after completing the nanodegree. The application URL and IP address will no longer work. 
+
 ## Project 7: Linux Server Configuration
 **Project Description** (from Udacity):
 >You will take a baseline installation of a Linux server and prepare it to host your web applications. You will secure your server from a number of attack vectors, install and configure a database server, and deploy one of your existing web applications onto it.
