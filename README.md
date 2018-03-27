@@ -1,4 +1,4 @@
-# Full-stack-Nanodegree
+# Full-stack-Nanodegree (Completed March 23, 2018)
 
 ## Project 1: Movie Trailer Website
 >The Movie Trailer Website project consists of server-side code to store a list of movies titles, along with its respective box art imagery and movie trailer website. The data should be served as a web page allowing visitors to review the movies and watch the trailers. (From Udacity)
@@ -21,3 +21,4 @@
 
 ## Project 7: Linux Server configuration
 >You will take a baseline installation of a Linux server and prepare it to host your web applications. You will secure your server from a number of attack vectors, install and configure a database server, and deploy one of your existing web applications onto it. (From Udacity)
+
