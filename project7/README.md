@@ -65,4 +65,28 @@ sudo dpkg-reconfigure tzdata
 1) Add new user 'grader' and give it sudo permissions
 ```
 sudo adduser grader
+sudo nano /etc/sudoers.d/grader
 ```
+1a) Type ```grader ALL=(ALL:ALL) ALL``` in the sudoer.d/grader file you opened. Save it <br>
+1b) Run the command ```sudo nano /etc/hosts``` and add ```127.0.1.1 ip-[private]-[ip]-[address]``` (example: mine is ip-172-26-9-16) to prevent a host permissions error <br>
+2) SSH login for grader
+```
+sudo mkdir /home/grader/.ssh
+sudo touch /home/grader/.ssh/authorized_keys
+sudo cp /root/.ssh/authorized_keys /home/grader/.ssh/authorized_keys
+sudo nano /home/grader/.ssh/authorized_keys
+ (delete everyting before 'ssh -rsa' so that only the key remains)
+ udo chmod 700 /home/grader/.ssh
+ sudo chmod 644 /home/grader/.ssh/authorized_keys
+```
+3) Give root ownership to grader and restart
+```
+sudo chown -R grader:grader /home/grader/.ssh
+sudo service ssh restart
+```
+4) Check that you can login with grader account
+```
+ssh -v -i ~/.ssh/udacity_key.pem grader@PUBLIC.IP.ADDRESS
+```
+#### Configure firewall, ports, and other permissions
+1) Login as grader with ```ssh -v -i ~/.ssh/udacity_key.pem grader@PUBLIC.IP.ADDRESS```
