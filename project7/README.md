@@ -76,8 +76,8 @@ sudo touch /home/grader/.ssh/authorized_keys
 sudo cp /root/.ssh/authorized_keys /home/grader/.ssh/authorized_keys
 sudo nano /home/grader/.ssh/authorized_keys
  (delete everyting before 'ssh -rsa' so that only the key remains)
- udo chmod 700 /home/grader/.ssh
- sudo chmod 644 /home/grader/.ssh/authorized_keys
+sudo chmod 700 /home/grader/.ssh
+sudo chmod 644 /home/grader/.ssh/authorized_keys
 ```
 3) Give root ownership to grader and restart
 ```
@@ -89,4 +89,27 @@ sudo service ssh restart
 ssh -v -i ~/.ssh/udacity_key.pem grader@PUBLIC.IP.ADDRESS
 ```
 #### Configure firewall, ports, and other permissions
-1) Login as grader with ```ssh -v -i ~/.ssh/udacity_key.pem grader@PUBLIC.IP.ADDRESS```
+1) Login as grader with ```ssh -v -i ~/.ssh/udacity_key.pem grader@PUBLIC.IP.ADDRESS``` <br>
+2) Note: if you sudo and system asks for sudo password for grader, use the UNIX password you entered when creating the user 'grader' <br>
+3) Turn off password authentication
+```
+sudo nano /etc/ssh/sshd_config
+```
+3a) Find PasswordAuthentication and set as No.
+4) Configure firewall to allow certain port numbers and port types
+```
+sudo ufw allow 2200/tcp
+sudo ufw allow 80/tcp
+sudo ufw allow 123/upd
+sudo ufw enable
+```
+4a) Go to your instance web page and find the Networking tab. Add to firewall: Custom TCP 2200 <br>
+5) Change port number for Login
+```
+sudo nano /etc/ssh/sshd_config
+```
+5a) Find the port line and add Port 2200. Keep Port 22 for now. Restart with ```sudo service ssh restart```. Open another command line window and try to login with grader using port 2200 with ```ssh -v -i ~/.ssh/udacity_key.pem grader@public.ip.address -p 2200```. If this works, then go back to /etc/ssh/sshd_config and you can remove Port 22 and keep port 2200 only. <br>
+6) Remove root Login. Type command ```sudo nano /etc/ssh/sshd_config``` and find PermitRootLogin and set it as No. Restart system.
+6a) Try to login as ubuntu/root. If you can still login, then add DenyUsers ubuntu to the sshd_config file. Test again <br>
+
+#### Install and Configure everything you need to upload your catalog project to your Linus Server
