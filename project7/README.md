@@ -95,7 +95,7 @@ ssh -v -i ~/.ssh/udacity_key.pem grader@PUBLIC.IP.ADDRESS
 ```
 sudo nano /etc/ssh/sshd_config
 ```
-3a) Find PasswordAuthentication and set as No.
+3a) Find PasswordAuthentication and set as No <br>
 4) Configure firewall to allow certain port numbers and port types
 ```
 sudo ufw allow 2200/tcp
