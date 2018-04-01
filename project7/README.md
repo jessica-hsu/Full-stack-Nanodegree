@@ -112,4 +112,121 @@ sudo nano /etc/ssh/sshd_config
 6) Remove root Login. Type command ```sudo nano /etc/ssh/sshd_config``` and find PermitRootLogin and set it as No. Restart system.
 6a) Try to login as ubuntu/root. If you can still login, then add DenyUsers ubuntu to the sshd_config file. Test again <br>
 
-#### Install and Configure everything you need to upload your catalog project to your Linus Server
+#### Install and Configure everything you need to upload your catalog project to your Linux Server
+1) Install Apache and Wsgi
+```
+sudo apt-get install apache2
+sudo apt-get install libapache2-mod-wsgi python-dev
+sudo a2enmod wsgi
+sudo service apache2 start
+```
+2) Install and set up Git stuff
+```
+sudo apt-get install git
+git config --global user.name [YOUR GIT USERNAME]
+git config --global user.email [YOUR GIT EMAIL]
+sudo cd /var/www
+sudo mkdir catalog
+sudo cd catalog
+sudo git clone [CLONE URL OF YOUR CATALOG PROJECT ON GITHUB] catalog
+```
+3) Configure wsgi
+3a) Make sure your folder (called catalog) containing all the code is inside a directory with this structure: /var/www/catalog/ <br>
+3b) Configure catalog.wsgi
+```
+sudo cd /var/www/catalog
+sudo nano catalog.wsgi
+```
+3c) Add this to catalog.wsgi
+```
+import sys
+import logging
+logging.basicConfig(stream=sys.stderr)
+sys.path.insert(0, "/var/www/catalog/")
+
+from catalog import app as application
+application.secret_key = 'somesecretphrasehere'
+```
+4) Install all the libraries you need for your python application
+```
+sudo cd /var/www/catalog/catalog
+sudo mv application.py __init__.py
+sudo apt-get install python-pip
+sudo pip install virtualenv
+sudo virtualenv venv
+source venv/bin/activate
+sudo pip install Flask -t /var/www/catalog/catalog/venv/lib/python2.7/site-packages
+sudo pip install [other python packages you might need] -t /var/www/catalog/catalog/venv/lib/python2.7/site-packages
+(Suggestions: flask_oauth, httplib2, oauth2client, sqlalchemy, psycopg2, sqlalchemy_utils)
+sudo nano /etc/apache2/sites-available/catalog.conf
+```
+4a) In /etc/apache2/sites-available/catalog.conf, add:
+```
+<VirtualHost *:80>
+   ServerName your.public.ip.address
+   ServerAlias [public-ip-address-and-some-more].compute.amazonaws.com
+   ServerAdmin admin@your.public.ip.address
+   WSGIDaemonProcess catalog python-path=/var/www/catalog:/var/www/catalog/venv/lib/python2.7/site-packages
+   WSGIProcessGroup catalog
+   WSGIScriptAlias / /var/www/catalog/catalog.wsgi
+   <Directory /var/www/catalog/Udacity-catalog-proj/>
+       Order allow,deny
+       Allow from all
+   </Directory>
+   Alias /static /var/www/catalog/catalog/static
+   <Directory /var/www/catalog/catalog/static/>
+       Order allow,deny
+       Allow from all
+   </Directory>
+   ErrorLog ${APACHE_LOG_DIR}/error.log
+   LogLevel warn
+   CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>
+```
+4b) Note: to find ServerAlias, you can google something like find AWS url with AWS lightsail public IP address. Something like that and you'll be able to find what your ServerAlias really is. <br>
+4c) Restart
+```
+sudo service apache2 reload
+sudo a2ensite catalog
+```
+#### Install and configure the database
+1) Install and Config PostgreSQL
+```
+sudo apt-get install libpq-dev python-dev
+sudo apt-get install postgresql postgresql-contrib
+sudo su - postgres
+psql
+CREATE USER catalog WITH PASSWORD 'password';
+ALTER USER catalog CREATEDB;
+CREATE DATABASE catalog with OWNER catalog;
+\c catalog
+REVOKE ALL ON SCHEMA public FROM public;
+GRANT ALL ON SCHEMA public TO catalog;
+\q
+exit
+```
+2) Modify your python files for the newly configured postgresql database
+```
+cd /var/www/catalog/catalog
+sudo nano __init__.py
+```
+2a) Find the line "engine = create_engine ..." and change to ```engine = create_engine('postgresql://catalog:password@localhost/catalog')``` <br>
+2b) Repeat Step 2 and 2a if you have a database set up file and/or a database populate file. <br>
+3) Restart apache service with ```sudo service apache2 reload```
+
+#### Ready, set, and deploy. Finally!
+1) Run your database set up file and/or datase populate file (if you have one)
+```
+sudo python /var/www/catalog/catalog/database_setup.py
+sudo python /var/www/catalog/catalog/database_populate.py
+```
+2) Go to http://YOUR.PUBLIC.IP.ADDRESS to see if things worked. Also check the ServerAlias URL <br>
+3) If you're using Google Login API or Facebook Login API, remember to go back to these and modify the settings because the server URLs have changed. If you leave as is, your logins with 3rd party API will not work.
+
+#### Good luck!
+**Again, major special thanks to these people for their <i>extremely</i> helpful README:** </br>
+[SteveWooding](https://github.com/SteveWooding/fullstack-nanodegree-linux-server-config),
+[iliketomatoes](https://github.com/iliketomatoes/linux_server_configuration),
+[stueken](https://github.com/stueken/FSND-P5_Linux-Server-Configuration),
+[rrjoson](https://github.com/rrjoson/udacity-linux-server-configuration),
+[anumsh](https://github.com/anumsh/Linux-Server-Configuration)
