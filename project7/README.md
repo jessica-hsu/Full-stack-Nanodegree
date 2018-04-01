@@ -48,4 +48,21 @@ Finger, Daemon NTPD, Apache2, Unattended Upgrades, Mod_wsgi (Apache HTTP server 
 ```
 bash-3.2$ ssh -i ~/.ssh/udacity_key.pem ubuntu@[YOUR.PUBLIC.IP.ADDRESS]
 ```
-#### 
+#### Install updates/upgrades and fix timezone
+1) Login to virtual machine (VM) <br>
+2) Update and upgrade everything:
+```
+sudo apt-get update
+sudo apt-get upgrade
+sudo apt-get install finger
+sudo apt-get install ntp
+```
+3) Change timezone to UTC (pick UTC after typing in command)
+```
+sudo dpkg-reconfigure tzdata
+```
+#### Add user and configure permissions & login stuff for Grader
+1) Add new user 'grader' and give it sudo permissions
+```
+sudo adduser grader
+```
