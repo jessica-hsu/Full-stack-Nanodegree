@@ -40,5 +40,12 @@ Finger, Daemon NTPD, Apache2, Unattended Upgrades, Mod_wsgi (Apache HTTP server 
 [anumsh](https://github.com/anumsh/Linux-Server-Configuration)
 
 ### Tutorial (based on a combination of the five tutorials above)
-#### Setting up the Linux Instance ... 
-to be continued
+#### Setting up the Linux Instance ...
+1) Follow the Amazon Lightsail instructions on Udacity <br>
+2) Login to the instance via web browser or command line <br>
+2a) Connect with Web Browser: Just click 'Connect via SSH' on the lightsail website when you click into the Instance <br>
+2b) Connect with Terminal/Command Line: Download the private key. Locate the private key file in your Downloads foler and rename to udacity_key (file extention is either .rsa or .pem). Move your private key file to ~/.ssh/ directory. You can now connect via terminal with:
+```
+bash-3.2$ ssh -i ~/.ssh/udacity_key.pem ubuntu@[YOUR.PUBLIC.IP.ADDRESS]
+```
+#### 
